@@ -1,0 +1,18 @@
+{
+  "name": "capstone-fintech-budgeting-app",
+  "version": "1.0.0",
+  "description": "Dicoding capstone fintech budgeting app",
+  "homepage": "https://github.com/mraihanaf/capstone-fintech-budgeting-app#readme",
+  "bugs": {
+    "url": "https://github.com/mraihanaf/capstone-fintech-budgeting-app/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mraihanaf/capstone-fintech-budgeting-app.git"
+  },
+  "license": "ISC",
+  "scripts": {
+    "dev": "docker compose up",
+    "prod": "docker compose -f docker-compose.prod.yaml up"
+  }
+}
