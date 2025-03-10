@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'balance',
+        'phone'
     ];
 
     /**
@@ -44,5 +46,27 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function transactions(){
+        return $this->hasMany(Transaction::class);
+    }
+    public function targets(){
+        return $this->hasMany(Target::class);
+    }
+    public function reports(){
+        return $this->hasMany(Report::class);
+    }
+    public function categories(){
+        return $this->hasMany(Category::class);
+    }
+    public function logs(){
+        return $this->hasMany(Log::class);
+    }
+    public function recommendations(){
+        return $this->hasMany(Recommendation::class);
+    }
+    public function budgets(){
+        return $this->hasMany(Budget::class);
     }
 }
