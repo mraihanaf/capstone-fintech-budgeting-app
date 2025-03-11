@@ -12,7 +12,7 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json(['message' => 'Get all transactions success.', 'transactions' => Transaction::all()]);
     }
 
     /**
@@ -20,7 +20,15 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = validator($request->all(), ['amount' => 'required', 'type' => 'required', 'description' => 'string']);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()], 422);
+        }
+
+        $transaction = Transaction::create(array_merge($request->all(), ['user_id' => 1]));
+
+        return response()->json(['message' => 'Create transaction success.', 'transaction' => $transaction]);
     }
 
     /**
@@ -28,7 +36,7 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        //
+        return response()->json(['message' => 'Get transaction success.', 'transaction' => $transaction]);
     }
 
     /**
@@ -36,7 +44,15 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-        //
+        $validator = validator($request->all(), ['amount' => 'required', 'type' => 'required', 'description' => 'string']);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()], 422);
+        }
+
+        $updatedTransaction = $transaction->update(array_merge($request->all(), ['user_id' => 1]));
+
+        return response()->json(['message' => 'Create transaction success.', 'transaction' => $updatedTransaction]);
     }
 
     /**
@@ -44,6 +60,7 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        //
+        $transaction->delete();
+        return response()->json(['message' => 'delete transaction success.']);
     }
 }
