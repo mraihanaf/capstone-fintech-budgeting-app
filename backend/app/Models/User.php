@@ -3,14 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens, CanResetPassword;
 
     /**
      * The attributes that are mass assignable.
@@ -24,6 +28,7 @@ class User extends Authenticatable
         'balance',
         'phone'
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -45,6 +50,11 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     public function transactions(){
