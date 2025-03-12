@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,10 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        return response()->json(['message' => 'Get all transactions success.', 'transactions' => Transaction::all()]);
+        return response([
+            'message' => 'Get all transactions success.',
+            'data' => TransactionResource::collection(Transaction::all())
+        ], 200);
     }
 
     /**
