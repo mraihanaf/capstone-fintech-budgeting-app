@@ -8,7 +8,8 @@ class Report extends Model
 {
     protected $fillable = ['user_id', 'report_type', 'report_file'];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

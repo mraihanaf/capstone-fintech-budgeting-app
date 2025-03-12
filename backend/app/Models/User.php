@@ -47,25 +47,32 @@ class User extends Authenticatable
         ];
     }
 
-    public function transactions(){
+    public function transactions()
+    {
         return $this->hasMany(Transaction::class);
     }
-    public function targets(){
+    public function targets()
+    {
         return $this->hasMany(Target::class);
     }
-    public function reports(){
+    public function reports()
+    {
         return $this->hasMany(Report::class);
     }
-    public function categories(){
+    public function categories()
+    {
         return $this->hasMany(Category::class);
     }
-    public function logs(){
+    public function logs()
+    {
         return $this->hasMany(Log::class);
     }
-    public function recommendations(){
+    public function recommendations()
+    {
         return $this->hasMany(Recommendation::class);
     }
-    public function budgets(){
+    public function budgets()
+    {
         return $this->hasMany(Budget::class);
     }
 }
