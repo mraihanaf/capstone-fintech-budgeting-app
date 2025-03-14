@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\ReportRequest;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TransactionResource extends JsonResource
@@ -12,7 +12,7 @@ class TransactionResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(ReportRequest $request): array
+    public function toArray(Request $request): array
     {
         return parent::toArray($request);
     }
