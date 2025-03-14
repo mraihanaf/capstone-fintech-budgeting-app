@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,9 +18,11 @@ class ReportFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => fake()->unique(),
+            'user_id' => User::factory(),
             'report_type' => fake()->randomElement(['monthly', 'yearly']),
-            'report_file' => fake()->fileExtension()
+            'report_file' => fake()->word() . '.pdf',
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

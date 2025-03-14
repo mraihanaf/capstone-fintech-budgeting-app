@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,9 +18,11 @@ class LogFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => fake()->unique(),
-            'action' => fake()->jobTitle(),
-            'details' => fake()->sentences()
+            'user_id' => User::factory(),
+            'action' => fake()->word(),
+            'details' => fake()->optional()->text(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

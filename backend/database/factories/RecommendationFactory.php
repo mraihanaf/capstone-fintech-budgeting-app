@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,8 +18,10 @@ class RecommendationFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => fake()->unique(),
-            'recommedation' => fake()->randomElement(['monthly', 'yearly'])
+            'user_id' => User::factory(),
+            'recommendation' => fake()->randomElement(['monthly', 'yearly']),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

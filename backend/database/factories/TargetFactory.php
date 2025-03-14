@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,11 +18,13 @@ class TargetFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => fake()->unique(),
-            'name' => fake()->name(),
-            'target_amount' => 100,
-            'saved_amount' => 50,
-            'deadline' => fake()->date()
+            'user_id' => User::factory(),
+            'name' => fake()->sentence(3),
+            'target_amount' => fake()->randomFloat(2, 10000, 1000000),
+            'saved_amount' => fake()->randomFloat(2, 0, 500000),
+            'deadline' => fake()->date(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }

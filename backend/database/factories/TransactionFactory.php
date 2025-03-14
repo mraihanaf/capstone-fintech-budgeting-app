@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,13 +19,15 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => fake()->unique(),
-            'category_id' => fake()->unique(),
-            'amount' => fake()->unique(),
+            'user_id' => User::factory(),
+            'category_id' => Category::factory(),
+            'amount' => fake()->randomFloat(2, 500, 500000),
             'type' => fake()->randomElement(['income', 'expense']),
-            'description' => fake()->sentences(),
+            'description' => fake()->optional()->sentence(),
             'transaction_date' => fake()->date(),
-            'is_recurring' => fake()->boolean()
+            'is_recurring' => fake()->boolean(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }
