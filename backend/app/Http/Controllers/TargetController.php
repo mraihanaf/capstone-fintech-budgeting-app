@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TargetRequest;
+use App\Http\Resources\TargetResource;
 use App\Models\Target;
-use Illuminate\Http\Request;
 
 class TargetController extends Controller
 {
@@ -12,15 +13,23 @@ class TargetController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'message' => 'Get all targets success.',
+            'data' => TargetResource::collection(Target::all())
+        ], 200);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TargetRequest $request)
     {
-        //
+        $target = Target::create($request->validated());
+
+        return response()->json([
+            'message' => 'Create target success.',
+            'target' => TargetResource::make($target)
+        ], 201);
     }
 
     /**
@@ -28,15 +37,23 @@ class TargetController extends Controller
      */
     public function show(Target $target)
     {
-        //
+        return response()->json([
+            'message' => 'Get target success.',
+            'target' => TargetResource::make($target)
+        ], 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Target $target)
+    public function update(TargetRequest $request, Target $target)
     {
-        //
+        $updatedTarget = $target->update($request->validated());
+
+        return response()->json([
+            'message' => 'Update target success.',
+            'target' => TargetResource::make($updatedTarget)
+        ], 200);
     }
 
     /**
@@ -44,6 +61,9 @@ class TargetController extends Controller
      */
     public function destroy(Target $target)
     {
-        //
+        $target->delete();
+        return response()->json([
+            'message' => 'delete target success.'
+        ], 200);
     }
 }

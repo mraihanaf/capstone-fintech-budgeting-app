@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Budget;
-use Illuminate\Http\Request;
+use App\Http\Requests\BudgetRequest;
+use App\Http\Resources\BudgetResource;
 
 class BudgetController extends Controller
 {
@@ -12,15 +13,23 @@ class BudgetController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'message' => 'Get all budgets success.',
+            'data' => BudgetResource::collection(Budget::all())
+        ], 200);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(BudgetRequest $request)
     {
-        //
+        $budget = Budget::create($request->validated());
+
+        return response()->json([
+            'message' => 'Create budget success.',
+            'budget' => BudgetResource::make($budget)
+        ], 201);
     }
 
     /**
@@ -28,15 +37,23 @@ class BudgetController extends Controller
      */
     public function show(Budget $budget)
     {
-        //
+        return response()->json([
+            'message' => 'Get budget success.',
+            'budget' => BudgetResource::make($budget)
+        ], 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Budget $budget)
+    public function update(BudgetRequest $request, Budget $budget)
     {
-        //
+        $updatedBudget = $budget->update($request->validated());
+
+        return response()->json([
+            'message' => 'Update budget success.',
+            'budget' => BudgetResource::make($updatedBudget)
+        ], 200);
     }
 
     /**
@@ -44,6 +61,9 @@ class BudgetController extends Controller
      */
     public function destroy(Budget $budget)
     {
-        //
+        $budget->delete();
+        return response()->json([
+            'message' => 'delete budget success.'
+        ], 200);
     }
 }
