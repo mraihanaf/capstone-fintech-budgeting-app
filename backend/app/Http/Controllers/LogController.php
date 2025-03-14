@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Log;
-use Illuminate\Http\Request;
+use App\Http\Requests\LogRequest;
 
 class LogController extends Controller
 {
@@ -18,7 +18,7 @@ class LogController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(LogRequest $request)
     {
         //
     }
@@ -34,7 +34,7 @@ class LogController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Log $log)
+    public function update(LogRequest $request, Log $log)
     {
         //
     }

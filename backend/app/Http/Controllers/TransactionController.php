@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
-use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
@@ -22,7 +22,7 @@ class TransactionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TransactionRequest $request)
     {
         $validator = validator($request->all(), ['amount' => 'required', 'type' => 'required', 'description' => 'string']);
 
@@ -46,7 +46,7 @@ class TransactionController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transaction $transaction)
+    public function update(TransactionRequest $request, Transaction $transaction)
     {
         $validator = validator($request->all(), ['amount' => 'required', 'type' => 'required', 'description' => 'string']);
 

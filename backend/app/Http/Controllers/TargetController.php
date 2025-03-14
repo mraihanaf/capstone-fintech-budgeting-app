@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TargetRequest;
 use App\Models\Target;
-use Illuminate\Http\Request;
 
 class TargetController extends Controller
 {
@@ -18,7 +18,7 @@ class TargetController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TargetRequest $request)
     {
         //
     }
@@ -34,7 +34,7 @@ class TargetController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Target $target)
+    public function update(TargetRequest $request, Target $target)
     {
         //
     }

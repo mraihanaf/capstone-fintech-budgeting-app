@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Budget;
-use Illuminate\Http\Request;
+use App\Http\Requests\BudgetRequest;
 
 class BudgetController extends Controller
 {
@@ -18,7 +18,7 @@ class BudgetController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(BudgetRequest $request)
     {
         //
     }
@@ -34,7 +34,7 @@ class BudgetController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Budget $budget)
+    public function update(BudgetRequest $request, Budget $budget)
     {
         //
     }
