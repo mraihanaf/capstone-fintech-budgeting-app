@@ -25,7 +25,6 @@ class TransactionController extends Controller
      */
     public function store(TransactionRequest $request)
     {
-        Log::info($request->user());
         $transaction = Transaction::create($request->validated());
 
         return response()->json([
