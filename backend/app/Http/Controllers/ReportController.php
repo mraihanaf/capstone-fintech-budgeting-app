@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Report;
 use App\Http\Requests\ReportRequest;
+use App\Http\Resources\ReportResource;
 
 class ReportController extends Controller
 {
@@ -12,7 +13,10 @@ class ReportController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'message' => 'Get all reports success.',
+            'data' => ReportResource::collection(Report::all())
+        ], 200);
     }
 
     /**
@@ -20,7 +24,12 @@ class ReportController extends Controller
      */
     public function store(ReportRequest $request)
     {
-        //
+        $report = Report::create($request->validated());
+
+        return response()->json([
+            'message' => 'Create report success.',
+            'report' => ReportResource::make($report)
+        ], 201);
     }
 
     /**
@@ -28,7 +37,10 @@ class ReportController extends Controller
      */
     public function show(Report $report)
     {
-        //
+        return response()->json([
+            'message' => 'Get report success.',
+            'report' => ReportResource::make($report)
+        ], 200);
     }
 
     /**
@@ -36,7 +48,12 @@ class ReportController extends Controller
      */
     public function update(ReportRequest $request, Report $report)
     {
-        //
+        $updatedReport = $report->update($request->validated());
+
+        return response()->json([
+            'message' => 'Update report success.',
+            'report' => ReportResource::make($updatedReport)
+        ], 200);
     }
 
     /**
@@ -44,6 +61,9 @@ class ReportController extends Controller
      */
     public function destroy(Report $report)
     {
-        //
+        $report->delete();
+        return response()->json([
+            'message' => 'delete report success.'
+        ], 200);
     }
 }

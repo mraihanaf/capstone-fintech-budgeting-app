@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Recommendation;
 use App\Http\Requests\RecommendationRequest;
+use App\Http\Resources\RecommendationResource;
 
 class RecommendationController extends Controller
 {
@@ -12,7 +13,10 @@ class RecommendationController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'message' => 'Get all recommendations success.',
+            'data' => RecommendationResource::collection(Recommendation::all())
+        ], 200);
     }
 
     /**
@@ -20,7 +24,12 @@ class RecommendationController extends Controller
      */
     public function store(RecommendationRequest $request)
     {
-        //
+        $recommendation = Recommendation::create($request->validated());
+
+        return response()->json([
+            'message' => 'Create recommendation success.',
+            'recommendation' => RecommendationResource::make($recommendation)
+        ], 201);
     }
 
     /**
@@ -28,7 +37,10 @@ class RecommendationController extends Controller
      */
     public function show(Recommendation $recommendation)
     {
-        //
+        return response()->json([
+            'message' => 'Get recommendation success.',
+            'recommendation' => RecommendationResource::make($recommendation)
+        ], 200);
     }
 
     /**
@@ -36,7 +48,12 @@ class RecommendationController extends Controller
      */
     public function update(RecommendationRequest $request, Recommendation $recommendation)
     {
-        //
+        $updatedRecommendation = $recommendation->update($request->validated());
+
+        return response()->json([
+            'message' => 'Update recommendation success.',
+            'recommendation' => RecommendationResource::make($updatedRecommendation)
+        ], 200);
     }
 
     /**
@@ -44,6 +61,9 @@ class RecommendationController extends Controller
      */
     public function destroy(Recommendation $recommendation)
     {
-        //
+        $recommendation->delete();
+        return response()->json([
+            'message' => 'delete recommendation success.'
+        ], 200);
     }
 }

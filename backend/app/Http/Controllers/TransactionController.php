@@ -13,7 +13,7 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        return response([
+        return response()->json([
             'message' => 'Get all transactions success.',
             'data' => TransactionResource::collection(Transaction::all())
         ], 200);
@@ -24,15 +24,12 @@ class TransactionController extends Controller
      */
     public function store(TransactionRequest $request)
     {
-        $validator = validator($request->all(), ['amount' => 'required', 'type' => 'required', 'description' => 'string']);
+        $transaction = $request->user()->create($request->validated());
 
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()], 422);
-        }
-
-        $transaction = Transaction::create(array_merge($request->all(), ['user_id' => 1]));
-
-        return response()->json(['message' => 'Create transaction success.', 'transaction' => $transaction]);
+        return response()->json([
+            'message' => 'Create transaction success.',
+            'transaction' => TransactionResource::make($transaction)
+        ], 201);
     }
 
     /**
@@ -40,7 +37,10 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        return response()->json(['message' => 'Get transaction success.', 'transaction' => $transaction]);
+        return response()->json([
+            'message' => 'Get transaction success.',
+            'transaction' => TransactionResource::make($transaction)
+        ], 200);
     }
 
     /**
@@ -48,15 +48,13 @@ class TransactionController extends Controller
      */
     public function update(TransactionRequest $request, Transaction $transaction)
     {
-        $validator = validator($request->all(), ['amount' => 'required', 'type' => 'required', 'description' => 'string']);
 
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()], 422);
-        }
+        $updatedTransaction = $transaction->update($request->validated());
 
-        $updatedTransaction = $transaction->update(array_merge($request->all(), ['user_id' => 1]));
-
-        return response()->json(['message' => 'Create transaction success.', 'transaction' => $updatedTransaction]);
+        return response()->json([
+            'message' => 'Update transaction success.',
+            'transaction' => TransactionResource::make($updatedTransaction)
+        ], 200);
     }
 
     /**
@@ -65,6 +63,8 @@ class TransactionController extends Controller
     public function destroy(Transaction $transaction)
     {
         $transaction->delete();
-        return response()->json(['message' => 'delete transaction success.']);
+        return response()->json([
+            'message' => 'delete transaction success.'
+        ], 200);
     }
 }

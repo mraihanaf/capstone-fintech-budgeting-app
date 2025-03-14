@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Log;
 use App\Http\Requests\LogRequest;
+use App\Http\Resources\LogResource;
 
 class LogController extends Controller
 {
@@ -12,7 +13,10 @@ class LogController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'message' => 'Get all logs success.',
+            'data' => LogResource::collection(Log::all())
+        ], 200);
     }
 
     /**
@@ -20,7 +24,12 @@ class LogController extends Controller
      */
     public function store(LogRequest $request)
     {
-        //
+        $log = Log::create($request->validated());
+
+        return response()->json([
+            'message' => 'Create log success.',
+            'log' => LogResource::make($log)
+        ], 201);
     }
 
     /**
@@ -28,7 +37,10 @@ class LogController extends Controller
      */
     public function show(Log $log)
     {
-        //
+        return response()->json([
+            'message' => 'Get log success.',
+            'log' => LogResource::make($log)
+        ], 200);
     }
 
     /**
@@ -36,7 +48,12 @@ class LogController extends Controller
      */
     public function update(LogRequest $request, Log $log)
     {
-        //
+        $updatedLog = $log->update($request->validated());
+
+        return response()->json([
+            'message' => 'Update log success.',
+            'log' => LogResource::make($updatedLog)
+        ], 200);
     }
 
     /**
@@ -44,6 +61,9 @@ class LogController extends Controller
      */
     public function destroy(Log $log)
     {
-        //
+        $log->delete();
+        return response()->json([
+            'message' => 'delete log success.'
+        ], 200);
     }
 }

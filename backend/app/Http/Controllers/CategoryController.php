@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Http\Requests\CategoryRequest;
+use App\Http\Resources\CategoryResource;
 
 class CategoryController extends Controller
 {
@@ -12,7 +13,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'message' => 'Get all categories success.',
+            'data' => CategoryResource::collection(Category::all())
+        ], 200);
     }
 
     /**
@@ -20,7 +24,12 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        //
+        $category = Category::create($request->validated());
+
+        return response()->json([
+            'message' => 'Create category success.',
+            'category' => CategoryResource::make($category)
+        ], 201);
     }
 
     /**
@@ -28,7 +37,10 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        return response()->json([
+            'message' => 'Get category success.',
+            'category' => CategoryResource::make($category)
+        ], 200);
     }
 
     /**
@@ -36,7 +48,12 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request, Category $category)
     {
-        //
+        $updatedCategory = $category->update($request->validated());
+
+        return response()->json([
+            'message' => 'Update category success.',
+            'category' => CategoryResource::make($updatedCategory)
+        ], 200);
     }
 
     /**
@@ -44,6 +61,9 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+        return response()->json([
+            'message' => 'delete category success.'
+        ], 200);
     }
 }
