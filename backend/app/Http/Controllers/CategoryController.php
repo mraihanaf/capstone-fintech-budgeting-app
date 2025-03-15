@@ -24,6 +24,7 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
+        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
         $category = auth()->user()->categories()->create($request->validated());
 
         return response()->json([

@@ -24,6 +24,7 @@ class ReportController extends Controller
      */
     public function store(ReportRequest $request)
     {
+        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
         $report = auth()->user()->reports()->create($request->validated());
 
         return response()->json([

@@ -24,6 +24,7 @@ class BudgetController extends Controller
      */
     public function store(BudgetRequest $request)
     {
+        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
         $budget = auth()->user()->budgets()->create($request->validated());
 
         return response()->json([

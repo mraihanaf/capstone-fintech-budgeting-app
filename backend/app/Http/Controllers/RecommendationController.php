@@ -24,6 +24,7 @@ class RecommendationController extends Controller
      */
     public function store(RecommendationRequest $request)
     {
+        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
         $recommendation = auth()->user()->recommendations()->create($request->validated());
 
         return response()->json([

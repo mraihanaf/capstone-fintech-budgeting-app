@@ -24,6 +24,7 @@ class LogController extends Controller
      */
     public function store(LogRequest $request)
     {
+        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
         $log = auth()->user()->logs()->create($request->validated());
 
         return response()->json([
