@@ -1,3 +1,5 @@
 [submodule "frontend"]
 	path = frontend
 	url = https://github.com/nasywadyah/frontend_project
+[submodule "frontend/"]
+	branch = master
