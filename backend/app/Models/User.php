@@ -62,32 +62,32 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class);
     }
-  
+
     public function targets()
     {
         return $this->hasMany(Target::class);
     }
-  
+
     public function reports()
     {
         return $this->hasMany(Report::class);
     }
-  
+
     public function categories()
     {
         return $this->hasMany(Category::class);
     }
-  
+
     public function logs()
     {
         return $this->hasMany(Log::class);
     }
-  
+
     public function recommendations()
     {
         return $this->hasMany(Recommendation::class);
     }
-  
+
     public function budgets()
     {
         return $this->hasMany(Budget::class);
