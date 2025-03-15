@@ -24,10 +24,10 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-Route::post('/update-profil', [UserController::class, 'UpdateProfile'])->middleware('auth:sanctum');
-Route::post('/change-password', [UserController::class, 'ChangePassword'])->middleware('auth:sanctum');
-
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/update-profil', [UserController::class, 'UpdateProfile']);
+    Route::post('/change-password', [UserController::class, 'ChangePassword']);
+
     Route::apiResource('transactions', TransactionController::class);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('budgets', BudgetController::class);
