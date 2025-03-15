@@ -15,7 +15,7 @@ class TransactionController extends Controller
     {
         return response()->json([
             'message' => 'Get all transactions success.',
-            'data' => TransactionResource::collection(Transaction::all())
+            'data' => TransactionResource::collection(Transaction::with('category')->get())
         ], 200);
     }
 
