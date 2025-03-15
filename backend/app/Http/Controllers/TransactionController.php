@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
-use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
 {
@@ -25,7 +24,7 @@ class TransactionController extends Controller
      */
     public function store(TransactionRequest $request)
     {
-        $transaction = Transaction::create($request->validated());
+        $transaction = auth()->user()->transactions()->create($request->validated());
 
         return response()->json([
             'message' => 'Create transaction success.',

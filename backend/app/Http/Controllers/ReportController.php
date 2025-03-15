@@ -24,7 +24,7 @@ class ReportController extends Controller
      */
     public function store(ReportRequest $request)
     {
-        $report = Report::create($request->validated());
+        $report = auth()->user()->reports()->create($request->validated());
 
         return response()->json([
             'message' => 'Create report success.',

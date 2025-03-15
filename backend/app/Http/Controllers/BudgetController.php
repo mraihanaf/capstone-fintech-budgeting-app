@@ -24,7 +24,7 @@ class BudgetController extends Controller
      */
     public function store(BudgetRequest $request)
     {
-        $budget = Budget::create($request->validated());
+        $budget = auth()->user()->budgets()->create($request->validated());
 
         return response()->json([
             'message' => 'Create budget success.',

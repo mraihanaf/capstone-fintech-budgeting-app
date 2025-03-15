@@ -24,11 +24,10 @@ class RecommendationController extends Controller
      */
     public function store(RecommendationRequest $request)
     {
-        $recommendation = Recommendation::create($request->validated());
+        $recommendation = auth()->user()->recommendations()->create($request->validated());
 
         return response()->json([
-            'message' => 'Create recommendation success.',
-            'recommendation' => RecommendationResource::make($recommendation)
+            'message' => 'Create recommendation success.','recommendation' => RecommendationResource::make($recommendation)
         ], 201);
     }
 

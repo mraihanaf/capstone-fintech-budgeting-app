@@ -24,7 +24,7 @@ class TargetController extends Controller
      */
     public function store(TargetRequest $request)
     {
-        $target = Target::create($request->validated());
+        $target = auth()->user()->targets()->create($request->validated());
 
         return response()->json([
             'message' => 'Create target success.',

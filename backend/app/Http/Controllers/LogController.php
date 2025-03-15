@@ -24,7 +24,7 @@ class LogController extends Controller
      */
     public function store(LogRequest $request)
     {
-        $log = Log::create($request->validated());
+        $log = auth()->user()->logs()->create($request->validated());
 
         return response()->json([
             'message' => 'Create log success.',

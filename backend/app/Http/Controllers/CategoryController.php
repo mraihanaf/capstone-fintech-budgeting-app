@@ -24,7 +24,7 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        $category = Category::create($request->validated());
+        $category = auth()->user()->categories()->create($request->validated());
 
         return response()->json([
             'message' => 'Create category success.',
