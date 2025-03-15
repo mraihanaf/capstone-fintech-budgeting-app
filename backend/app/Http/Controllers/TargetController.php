@@ -24,11 +24,12 @@ class TargetController extends Controller
      */
     public function store(TargetRequest $request)
     {
-        $target = Target::create($request->validated());
+        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
+        $target = auth()->user()->targets()->create($request->validated());
 
         return response()->json([
             'message' => 'Create target success.',
-            'target' => TargetResource::make($target)
+            'data' => TargetResource::make($target)
         ], 201);
     }
 
@@ -39,7 +40,7 @@ class TargetController extends Controller
     {
         return response()->json([
             'message' => 'Get target success.',
-            'target' => TargetResource::make($target)
+            'data' => TargetResource::make($target)
         ], 200);
     }
 
@@ -48,11 +49,11 @@ class TargetController extends Controller
      */
     public function update(TargetRequest $request, Target $target)
     {
-        $updatedTarget = $target->update($request->validated());
+        $target->update($request->validated());
 
         return response()->json([
             'message' => 'Update target success.',
-            'target' => TargetResource::make($updatedTarget)
+            'data' => TargetResource::make($target->refresh())
         ], 200);
     }
 
@@ -62,8 +63,10 @@ class TargetController extends Controller
     public function destroy(Target $target)
     {
         $target->delete();
+
         return response()->json([
-            'message' => 'delete target success.'
+            'message' => 'delete target success.',
+            'data' => TargetResource::make($target)
         ], 200);
     }
 }

@@ -24,11 +24,12 @@ class LogController extends Controller
      */
     public function store(LogRequest $request)
     {
-        $log = Log::create($request->validated());
+        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
+        $log = auth()->user()->logs()->create($request->validated());
 
         return response()->json([
             'message' => 'Create log success.',
-            'log' => LogResource::make($log)
+            'data' => LogResource::make($log)
         ], 201);
     }
 
@@ -39,7 +40,7 @@ class LogController extends Controller
     {
         return response()->json([
             'message' => 'Get log success.',
-            'log' => LogResource::make($log)
+            'data' => LogResource::make($log)
         ], 200);
     }
 
@@ -48,11 +49,11 @@ class LogController extends Controller
      */
     public function update(LogRequest $request, Log $log)
     {
-        $updatedLog = $log->update($request->validated());
+        $log->update($request->validated());
 
         return response()->json([
             'message' => 'Update log success.',
-            'log' => LogResource::make($updatedLog)
+            'data' => LogResource::make($log->refresh())
         ], 200);
     }
 
@@ -62,8 +63,10 @@ class LogController extends Controller
     public function destroy(Log $log)
     {
         $log->delete();
+
         return response()->json([
-            'message' => 'delete log success.'
+            'message' => 'delete log success.',
+            'data' => LogResource::make($log)
         ], 200);
     }
 }

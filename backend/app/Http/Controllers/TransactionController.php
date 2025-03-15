@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
-use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
 {
@@ -16,7 +15,7 @@ class TransactionController extends Controller
     {
         return response()->json([
             'message' => 'Get all transactions success.',
-            'data' => TransactionResource::collection(Transaction::all())
+            'data' => TransactionResource::collection(Transaction::with('category')->get())
         ], 200);
     }
 
@@ -25,11 +24,12 @@ class TransactionController extends Controller
      */
     public function store(TransactionRequest $request)
     {
-        $transaction = Transaction::create($request->validated());
+        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
+        $transaction = auth()->user()->transactions()->create($request->validated());
 
         return response()->json([
             'message' => 'Create transaction success.',
-            'transaction' => TransactionResource::make($transaction)
+            'data' => TransactionResource::make($transaction)
         ], 201);
     }
 
@@ -40,7 +40,7 @@ class TransactionController extends Controller
     {
         return response()->json([
             'message' => 'Get transaction success.',
-            'transaction' => TransactionResource::make($transaction)
+            'data' => TransactionResource::make($transaction)
         ], 200);
     }
 
@@ -49,12 +49,11 @@ class TransactionController extends Controller
      */
     public function update(TransactionRequest $request, Transaction $transaction)
     {
-
-        $updatedTransaction = $transaction->update($request->validated());
+        $transaction->update($request->validated());
 
         return response()->json([
             'message' => 'Update transaction success.',
-            'transaction' => TransactionResource::make($updatedTransaction)
+            'data' => TransactionResource::make($transaction->refresh())
         ], 200);
     }
 
@@ -64,8 +63,10 @@ class TransactionController extends Controller
     public function destroy(Transaction $transaction)
     {
         $transaction->delete();
+
         return response()->json([
-            'message' => 'delete transaction success.'
+            'message' => 'delete transaction success.',
+            'data' => TransactionResource::make($transaction)
         ], 200);
     }
 }

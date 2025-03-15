@@ -22,7 +22,6 @@ class BudgetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
             'category_id' => 'nullable|exists:categories,id',
             'budget_limit' => 'required|numeric|min:0',
             'start_date' => 'required|date',

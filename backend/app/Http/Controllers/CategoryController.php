@@ -24,11 +24,12 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        $category = Category::create($request->validated());
+        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
+        $category = auth()->user()->categories()->create($request->validated());
 
         return response()->json([
             'message' => 'Create category success.',
-            'category' => CategoryResource::make($category)
+            'data' => CategoryResource::make($category)
         ], 201);
     }
 
@@ -39,7 +40,7 @@ class CategoryController extends Controller
     {
         return response()->json([
             'message' => 'Get category success.',
-            'category' => CategoryResource::make($category)
+            'data' => CategoryResource::make($category)
         ], 200);
     }
 
@@ -48,11 +49,11 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request, Category $category)
     {
-        $updatedCategory = $category->update($request->validated());
+        $category->update($request->validated());
 
         return response()->json([
             'message' => 'Update category success.',
-            'category' => CategoryResource::make($updatedCategory)
+            'data' => CategoryResource::make($category->refresh())
         ], 200);
     }
 
@@ -62,8 +63,10 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $category->delete();
+
         return response()->json([
-            'message' => 'delete category success.'
+            'message' => 'delete category success.',
+            'data' => CategoryResource::make($category)
         ], 200);
     }
 }

@@ -22,7 +22,6 @@ class ReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
             'report_type' => 'required|in:monthly,yearly',
             'report_file' => 'required|string|max:255',
         ];

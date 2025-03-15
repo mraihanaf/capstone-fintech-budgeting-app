@@ -22,7 +22,6 @@ class TargetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
             'target_amount' => 'required|numeric|min:0',
             'saved_amount' => 'required|numeric|min:0',

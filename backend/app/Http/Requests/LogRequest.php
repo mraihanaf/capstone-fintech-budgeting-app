@@ -22,7 +22,6 @@ class LogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
             'action' => 'required|string|max:255',
             'details' => 'nullable|string',
         ];
