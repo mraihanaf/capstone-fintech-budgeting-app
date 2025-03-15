@@ -27,7 +27,8 @@ class RecommendationController extends Controller
         $recommendation = auth()->user()->recommendations()->create($request->validated());
 
         return response()->json([
-            'message' => 'Create recommendation success.','recommendation' => RecommendationResource::make($recommendation)
+            'message' => 'Create recommendation success.',
+            'data' => RecommendationResource::make($recommendation)
         ], 201);
     }
 
@@ -38,7 +39,7 @@ class RecommendationController extends Controller
     {
         return response()->json([
             'message' => 'Get recommendation success.',
-            'recommendation' => RecommendationResource::make($recommendation)
+            'data' => RecommendationResource::make($recommendation)
         ], 200);
     }
 
@@ -47,11 +48,11 @@ class RecommendationController extends Controller
      */
     public function update(RecommendationRequest $request, Recommendation $recommendation)
     {
-        $updatedRecommendation = $recommendation->update($request->validated());
+        $recommendation->update($request->validated());
 
         return response()->json([
             'message' => 'Update recommendation success.',
-            'recommendation' => RecommendationResource::make($updatedRecommendation)
+            'data' => RecommendationResource::make($recommendation->refresh())
         ], 200);
     }
 
@@ -61,8 +62,10 @@ class RecommendationController extends Controller
     public function destroy(Recommendation $recommendation)
     {
         $recommendation->delete();
+
         return response()->json([
-            'message' => 'delete recommendation success.'
+            'message' => 'delete recommendation success.',
+            'data' => RecommendationResource::make($recommendation))
         ], 200);
     }
 }

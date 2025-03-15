@@ -28,7 +28,7 @@ class ReportController extends Controller
 
         return response()->json([
             'message' => 'Create report success.',
-            'report' => ReportResource::make($report)
+            'data' => ReportResource::make($report)
         ], 201);
     }
 
@@ -39,7 +39,7 @@ class ReportController extends Controller
     {
         return response()->json([
             'message' => 'Get report success.',
-            'report' => ReportResource::make($report)
+            'data' => ReportResource::make($report)
         ], 200);
     }
 
@@ -48,11 +48,11 @@ class ReportController extends Controller
      */
     public function update(ReportRequest $request, Report $report)
     {
-        $updatedReport = $report->update($request->validated());
+        $report->update($request->validated());
 
         return response()->json([
             'message' => 'Update report success.',
-            'report' => ReportResource::make($updatedReport)
+            'data' => ReportResource::make($report->refresh())
         ], 200);
     }
 
@@ -62,8 +62,10 @@ class ReportController extends Controller
     public function destroy(Report $report)
     {
         $report->delete();
+
         return response()->json([
-            'message' => 'delete report success.'
-        ], 200);
+            'message' => 'delete report success.',
+            'data' => ReportResource::make($report)
+        ]);
     }
 }

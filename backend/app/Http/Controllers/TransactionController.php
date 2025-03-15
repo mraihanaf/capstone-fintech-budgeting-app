@@ -28,7 +28,7 @@ class TransactionController extends Controller
 
         return response()->json([
             'message' => 'Create transaction success.',
-            'transaction' => TransactionResource::make($transaction)
+            'data' => TransactionResource::make($transaction)
         ], 201);
     }
 
@@ -39,7 +39,7 @@ class TransactionController extends Controller
     {
         return response()->json([
             'message' => 'Get transaction success.',
-            'transaction' => TransactionResource::make($transaction)
+            'data' => TransactionResource::make($transaction)
         ], 200);
     }
 
@@ -48,12 +48,11 @@ class TransactionController extends Controller
      */
     public function update(TransactionRequest $request, Transaction $transaction)
     {
-
-        $updatedTransaction = $transaction->update($request->validated());
+        $transaction->update($request->validated());
 
         return response()->json([
             'message' => 'Update transaction success.',
-            'transaction' => TransactionResource::make($updatedTransaction)
+            'data' => TransactionResource::make($transaction->refresh())
         ], 200);
     }
 
@@ -63,8 +62,10 @@ class TransactionController extends Controller
     public function destroy(Transaction $transaction)
     {
         $transaction->delete();
+
         return response()->json([
-            'message' => 'delete transaction success.'
+            'message' => 'delete transaction success.',
+            'data' => TransactionResource::make($transaction)
         ], 200);
     }
 }
