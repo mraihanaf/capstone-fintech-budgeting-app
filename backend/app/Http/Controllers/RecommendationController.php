@@ -65,7 +65,7 @@ class RecommendationController extends Controller
 
         return response()->json([
             'message' => 'delete recommendation success.',
-            'data' => RecommendationResource::make($recommendation))
+            'data' => RecommendationResource::make($recommendation)
         ], 200);
     }
 }
