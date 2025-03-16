@@ -9,6 +9,7 @@ class Log extends Model
 {
     use HasFactory;
     protected $fillable = ['user_id', 'action', 'details'];
+    protected $with = ['user'];
 
     public function user()
     {

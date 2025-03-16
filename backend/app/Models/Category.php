@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
+
     use HasFactory;
-    protected $fillable = ['user_id', 'name', 'type'];
+    protected $fillable = ['user_id','name','type'];
+    protected $with = ['user','transactions'];
 
     public function user()
     {

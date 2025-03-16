@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Budget extends Model
 {
+
     use HasFactory;
-    protected $fillable = ['user_id', 'category_id', 'budget_limit', 'start_date', 'end_date'];
+    protected $fillable = ['user_id','category_id','budget_limit','start_date','end_date'];
+    protected $with = ['user','category'];
 
     public function user()
     {
