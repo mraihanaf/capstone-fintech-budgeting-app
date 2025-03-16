@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Recommendation;
-use Illuminate\Http\Request;
+use App\Http\Requests\RecommendationRequest;
+use App\Http\Resources\RecommendationResource;
 
 class RecommendationController extends Controller
 {
@@ -12,15 +13,24 @@ class RecommendationController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'message' => 'Get all recommendations success.',
+            'data' => RecommendationResource::collection(Recommendation::all())
+        ], 200);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(RecommendationRequest $request)
     {
-        //
+        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
+        $recommendation = auth()->user()->recommendations()->create($request->validated());
+
+        return response()->json([
+            'message' => 'Create recommendation success.',
+            'data' => RecommendationResource::make($recommendation)
+        ], 201);
     }
 
     /**
@@ -28,15 +38,23 @@ class RecommendationController extends Controller
      */
     public function show(Recommendation $recommendation)
     {
-        //
+        return response()->json([
+            'message' => 'Get recommendation success.',
+            'data' => RecommendationResource::make($recommendation)
+        ], 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Recommendation $recommendation)
+    public function update(RecommendationRequest $request, Recommendation $recommendation)
     {
-        //
+        $recommendation->update($request->validated());
+
+        return response()->json([
+            'message' => 'Update recommendation success.',
+            'data' => RecommendationResource::make($recommendation->refresh())
+        ], 200);
     }
 
     /**
@@ -44,6 +62,11 @@ class RecommendationController extends Controller
      */
     public function destroy(Recommendation $recommendation)
     {
-        //
+        $recommendation->delete();
+
+        return response()->json([
+            'message' => 'delete recommendation success.',
+            'data' => RecommendationResource::make($recommendation)
+        ], 200);
     }
 }
