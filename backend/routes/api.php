@@ -1,17 +1,17 @@
 <?php
 
-use App\Http\Controllers\BudgetController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\LogController;
-use App\Http\Controllers\PasswordController;
-use App\Http\Controllers\RecommendationController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\TargetController;
-use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Features\BudgetController;
+use App\Http\Controllers\Features\CategoryController;
+use App\Http\Controllers\Features\LogController;
+use App\Http\Controllers\Features\RecommendationController;
+use App\Http\Controllers\Features\ReportController;
+use App\Http\Controllers\Features\TargetController;
+use App\Http\Controllers\Features\TransactionController;
+use App\Http\Controllers\Users\ProfileController;
+use App\Http\Controllers\Users\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
 
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -30,7 +30,7 @@ Route::prefix('password')->group(function () {
 });
 
 Route::prefix('profile')->group(function () {
-    Route::post('/update-profil', [ProfileController::class, 'update'])->middleware('auth:sanctum');
+    Route::post('update', [ProfileController::class, 'update'])->middleware('auth:sanctum');
 });
 
 Route::middleware('auth:sanctum')->group(function () {
