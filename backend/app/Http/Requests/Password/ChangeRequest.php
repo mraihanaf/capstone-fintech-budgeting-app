@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Password;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TransactionRequest extends FormRequest
+class ChangeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,9 @@ class TransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_id' => 'nullable|exists:categories,id',
-            'amount' => 'required|numeric|min:0.01',
-            'type' => 'required|in:income,expense',
-            'description' => 'nullable|string|max:1000',
-            'transaction_date' => 'required|date|before_or_equal:today',
-            'is_recurring' => 'boolean'
+            'current_password' => 'required|current_password:api',
+            'new_password' => 'required|string|min:8|confirmed',
+            'new_password_confirmation' => 'required|string|min:8',
         ];
     }
 }

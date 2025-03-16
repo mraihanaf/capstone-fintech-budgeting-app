@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Features;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Features\RecommendationRequest;
 use App\Models\Recommendation;
-use App\Http\Requests\RecommendationRequest;
 use App\Http\Resources\RecommendationResource;
 
 class RecommendationController extends Controller
@@ -24,12 +25,11 @@ class RecommendationController extends Controller
      */
     public function store(RecommendationRequest $request)
     {
-        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
-        $recommendation = auth()->user()->recommendations()->create($request->validated());
+        $recommendation = auth('api')->user()->recommendations()->create($request->validated());
 
         return response()->json([
             'message' => 'Create recommendation success.',
-            'data' => RecommendationResource::make($recommendation)
+            'data' => new RecommendationResource($recommendation)
         ], 201);
     }
 
@@ -40,7 +40,7 @@ class RecommendationController extends Controller
     {
         return response()->json([
             'message' => 'Get recommendation success.',
-            'data' => RecommendationResource::make($recommendation)
+            'data' => new RecommendationResource($recommendation)
         ], 200);
     }
 
@@ -53,7 +53,7 @@ class RecommendationController extends Controller
 
         return response()->json([
             'message' => 'Update recommendation success.',
-            'data' => RecommendationResource::make($recommendation->refresh())
+            'data' => new RecommendationResource($recommendation->refresh())
         ], 200);
     }
 
@@ -66,7 +66,7 @@ class RecommendationController extends Controller
 
         return response()->json([
             'message' => 'delete recommendation success.',
-            'data' => RecommendationResource::make($recommendation)
+            'data' => new RecommendationResource($recommendation)
         ], 200);
     }
 }

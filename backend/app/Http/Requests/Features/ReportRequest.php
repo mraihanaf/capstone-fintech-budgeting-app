@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Features;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class BudgetRequest extends FormRequest
+class ReportRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,8 @@ class BudgetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_id' => 'nullable|exists:categories,id',
-            'budget_limit' => 'required|numeric|min:0',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
+            'report_type' => 'required|in:monthly,yearly',
+            'report_file' => 'required|string|max:255',
         ];
     }
 }

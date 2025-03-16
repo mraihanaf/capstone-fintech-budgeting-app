@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Features;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Features\BudgetRequest;
 use App\Models\Budget;
-use App\Http\Requests\BudgetRequest;
 use App\Http\Resources\BudgetResource;
 
 class BudgetController extends Controller
@@ -24,12 +25,11 @@ class BudgetController extends Controller
      */
     public function store(BudgetRequest $request)
     {
-        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
-        $budget = auth()->user()->budgets()->create($request->validated());
+        $budget = auth('api')->user()->budgets()->create($request->validated());
 
         return response()->json([
             'message' => 'Create budget success.',
-            'data' => BudgetResource::make($budget)
+            'data' => new BudgetResource($budget)
         ], 201);
     }
 
@@ -40,7 +40,7 @@ class BudgetController extends Controller
     {
         return response()->json([
             'message' => 'Get budget success.',
-            'data' => BudgetResource::make($budget)
+            'data' => new BudgetResource($budget)
         ], 200);
     }
 
@@ -53,7 +53,7 @@ class BudgetController extends Controller
 
         return response()->json([
             'message' => 'Update budget success.',
-            'data' => BudgetResource::make($budget)
+            'data' => new BudgetResource($budget)
         ], 200);
     }
 
@@ -66,7 +66,7 @@ class BudgetController extends Controller
 
         return response()->json([
             'message' => 'delete budget success.',
-            'data' => BudgetResource::make($budget)
+            'data' => new BudgetResource($budget)
         ], 200);
     }
 }

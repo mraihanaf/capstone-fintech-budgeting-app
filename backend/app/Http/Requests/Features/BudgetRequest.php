@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Features;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LogRequest extends FormRequest
+class BudgetRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,10 @@ class LogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'action' => 'required|string|max:255',
-            'details' => 'nullable|string',
+            'category_id' => 'nullable|exists:categories,id',
+            'budget_limit' => 'required|numeric|min:0',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
         ];
     }
 }

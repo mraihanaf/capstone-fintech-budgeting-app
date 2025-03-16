@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Features;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Features\ReportRequest;
 use App\Models\Report;
-use App\Http\Requests\ReportRequest;
 use App\Http\Resources\ReportResource;
 
 class ReportController extends Controller
@@ -24,12 +25,11 @@ class ReportController extends Controller
      */
     public function store(ReportRequest $request)
     {
-        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
-        $report = auth()->user()->reports()->create($request->validated());
+        $report = auth('api')->user()->reports()->create($request->validated());
 
         return response()->json([
             'message' => 'Create report success.',
-            'data' => ReportResource::make($report)
+            'data' => new ReportResource($report)
         ], 201);
     }
 
@@ -40,7 +40,7 @@ class ReportController extends Controller
     {
         return response()->json([
             'message' => 'Get report success.',
-            'data' => ReportResource::make($report)
+            'data' => new ReportResource($report)
         ], 200);
     }
 
@@ -53,7 +53,7 @@ class ReportController extends Controller
 
         return response()->json([
             'message' => 'Update report success.',
-            'data' => ReportResource::make($report->refresh())
+            'data' => new ReportResource($report->refresh())
         ], 200);
     }
 
@@ -66,7 +66,7 @@ class ReportController extends Controller
 
         return response()->json([
             'message' => 'delete report success.',
-            'data' => ReportResource::make($report)
+            'data' => new ReportResource($report)
         ]);
     }
 }
