@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Features;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Features\BudgetRequest;
 use App\Models\Budget;
-use App\Http\Requests\BudgetRequest;
 use App\Http\Resources\BudgetResource;
 
 class BudgetController extends Controller
@@ -24,8 +25,7 @@ class BudgetController extends Controller
      */
     public function store(BudgetRequest $request)
     {
-        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
-        $budget = auth()->user()->budgets()->create($request->validated());
+        $budget = auth('api')->user()->budgets()->create($request->validated());
 
         return response()->json([
             'message' => 'Create budget success.',

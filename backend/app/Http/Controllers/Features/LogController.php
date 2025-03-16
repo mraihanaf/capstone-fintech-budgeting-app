@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Features;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Features\LogRequest;
 use App\Models\Log;
-use App\Http\Requests\LogRequest;
 use App\Http\Resources\LogResource;
 
 class LogController extends Controller
@@ -24,8 +25,7 @@ class LogController extends Controller
      */
     public function store(LogRequest $request)
     {
-        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
-        $log = auth()->user()->logs()->create($request->validated());
+        $log = auth('api')->user()->logs()->create($request->validated());
 
         return response()->json([
             'message' => 'Create log success.',

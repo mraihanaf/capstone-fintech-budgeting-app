@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Features;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Features\RecommendationRequest;
 use App\Models\Recommendation;
-use App\Http\Requests\RecommendationRequest;
 use App\Http\Resources\RecommendationResource;
 
 class RecommendationController extends Controller
@@ -24,8 +25,7 @@ class RecommendationController extends Controller
      */
     public function store(RecommendationRequest $request)
     {
-        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
-        $recommendation = auth()->user()->recommendations()->create($request->validated());
+        $recommendation = auth('api')->user()->recommendations()->create($request->validated());
 
         return response()->json([
             'message' => 'Create recommendation success.',

@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Features;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Features\CategoryRequest;
 use App\Models\Category;
-use App\Http\Requests\CategoryRequest;
+
 use App\Http\Resources\CategoryResource;
 
 class CategoryController extends Controller
@@ -24,8 +26,7 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
-        $category = auth()->user()->categories()->create($request->validated());
+        $category = auth('api')->user()->categories()->create($request->validated());
 
         return response()->json([
             'message' => 'Create category success.',

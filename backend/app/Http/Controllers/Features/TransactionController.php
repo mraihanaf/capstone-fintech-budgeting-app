@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Features;
 
-use App\Http\Requests\TransactionRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Features\TransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
 
@@ -24,8 +25,7 @@ class TransactionController extends Controller
      */
     public function store(TransactionRequest $request)
     {
-        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
-        $transaction = auth()->user()->transactions()->create($request->validated());
+        $transaction = auth('api')->user()->transactions()->create($request->validated());
 
         return response()->json([
             'message' => 'Create transaction success.',

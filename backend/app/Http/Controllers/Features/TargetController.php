@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Features;
 
-use App\Http\Requests\TargetRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Features\TargetRequest;
 use App\Http\Resources\TargetResource;
 use App\Models\Target;
 
@@ -24,8 +25,7 @@ class TargetController extends Controller
      */
     public function store(TargetRequest $request)
     {
-        // Kalau merah biarin aja, masih tetep jalan. Extension Intelephense ga bisa ngedeteksi method user()
-        $target = auth()->user()->targets()->create($request->validated());
+        $target = auth('api')->user()->targets()->create($request->validated());
 
         return response()->json([
             'message' => 'Create target success.',
