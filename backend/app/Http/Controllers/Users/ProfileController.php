@@ -3,22 +3,18 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Users\ProfileRequest;
 use App\Http\Resources\UserResource;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-    public function update(Request $request)
+    public function update(ProfileRequest $request)
     {
-        $request->validate([
-            'name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:20',
-        ]);
+        $validated = $request->validated();
 
         $user = Auth::user();
-        $user->update($request->only(['name', 'email', 'phone']));
+        $user->update($validated);
 
         return response()->json([
             'message' => 'Profile updated successfully',

@@ -3,20 +3,28 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Password\ChangeRequest;
+use App\Http\Requests\Password\ForgotRequest;
+use App\Http\Requests\Password\ResetRequest;
 use App\Models\User;
 use App\Notifications\ResetPasswordNotification;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
 class PasswordController extends Controller
 {
-    public function forgot(Request $request)
+    public function forgot(ForgotRequest $request)
     {
-        $request->validate(['email' => 'required|email|exists:users,email']);
+        $validated = $request->validated();
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $validated['email'])->first();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User with this email does not exist.'
+            ], 404);
+        }
 
         $token = Password::createToken($user);
         $user->notify(new ResetPasswordNotification($token));
@@ -26,16 +34,12 @@ class PasswordController extends Controller
         ], 200);
     }
 
-    public function reset(Request $request)
+    public function reset(ResetRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-            'token' => 'required',
-            'password' => 'required|min:8|confirmed',
-        ]);
+        $validated = $request->validated();
 
         $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
+            $validated,
             function ($user, $password) {
                 $user->password = bcrypt($password);
                 $user->save();
@@ -47,25 +51,18 @@ class PasswordController extends Controller
             : response()->json(['message' => 'Invalid or expired token.'], 400);
     }
 
-    public function change(Request $request)
+    public function change(ChangeRequest $request)
     {
-        $request->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|string|min:8|confirmed',
-        ]);
+        $validated = $request->validated();
 
         $user = Auth::user();
 
-        if (!Hash::check($request->current_password, $user->password)) {
-            abort(400, 'Current password is incorrect.');
-        }
-
-        if (Hash::check($request->new_password, $user->password)) {
+        if (Hash::check($validated['new_password'], $user->password)) {
             abort(400, 'New password cannot be the same as the old password.');
         }
 
         $user->update([
-            'password' => Hash::make($request->new_password),
+            'password' => Hash::make($validated['new_password']),
         ]);
 
         return response()->json([
