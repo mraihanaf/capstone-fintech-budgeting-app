@@ -29,7 +29,7 @@ class BudgetController extends Controller
 
         return response()->json([
             'message' => 'Create budget success.',
-            'data' => BudgetResource::make($budget)
+            'data' => new BudgetResource($budget)
         ], 201);
     }
 
@@ -40,7 +40,7 @@ class BudgetController extends Controller
     {
         return response()->json([
             'message' => 'Get budget success.',
-            'data' => BudgetResource::make($budget)
+            'data' => new BudgetResource($budget)
         ], 200);
     }
 
@@ -53,7 +53,7 @@ class BudgetController extends Controller
 
         return response()->json([
             'message' => 'Update budget success.',
-            'data' => BudgetResource::make($budget)
+            'data' => new BudgetResource($budget)
         ], 200);
     }
 
@@ -66,7 +66,7 @@ class BudgetController extends Controller
 
         return response()->json([
             'message' => 'delete budget success.',
-            'data' => BudgetResource::make($budget)
+            'data' => new BudgetResource($budget)
         ], 200);
     }
 }

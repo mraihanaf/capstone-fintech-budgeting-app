@@ -29,7 +29,7 @@ class RecommendationController extends Controller
 
         return response()->json([
             'message' => 'Create recommendation success.',
-            'data' => RecommendationResource::make($recommendation)
+            'data' => new RecommendationResource($recommendation)
         ], 201);
     }
 
@@ -40,7 +40,7 @@ class RecommendationController extends Controller
     {
         return response()->json([
             'message' => 'Get recommendation success.',
-            'data' => RecommendationResource::make($recommendation)
+            'data' => new RecommendationResource($recommendation)
         ], 200);
     }
 
@@ -53,7 +53,7 @@ class RecommendationController extends Controller
 
         return response()->json([
             'message' => 'Update recommendation success.',
-            'data' => RecommendationResource::make($recommendation->refresh())
+            'data' => new RecommendationResource($recommendation->refresh())
         ], 200);
     }
 
@@ -66,7 +66,7 @@ class RecommendationController extends Controller
 
         return response()->json([
             'message' => 'delete recommendation success.',
-            'data' => RecommendationResource::make($recommendation)
+            'data' => new RecommendationResource($recommendation)
         ], 200);
     }
 }

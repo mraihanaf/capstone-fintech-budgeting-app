@@ -30,7 +30,7 @@ class CategoryController extends Controller
 
         return response()->json([
             'message' => 'Create category success.',
-            'data' => CategoryResource::make($category)
+            'data' => new CategoryResource($category)
         ], 201);
     }
 
@@ -41,7 +41,7 @@ class CategoryController extends Controller
     {
         return response()->json([
             'message' => 'Get category success.',
-            'data' => CategoryResource::make($category)
+            'data' => new CategoryResource($category)
         ], 200);
     }
 
@@ -54,7 +54,7 @@ class CategoryController extends Controller
 
         return response()->json([
             'message' => 'Update category success.',
-            'data' => CategoryResource::make($category->refresh())
+            'data' => new CategoryResource($category->refresh())
         ], 200);
     }
 
@@ -67,7 +67,7 @@ class CategoryController extends Controller
 
         return response()->json([
             'message' => 'delete category success.',
-            'data' => CategoryResource::make($category)
+            'data' => new CategoryResource($category)
         ], 200);
     }
 }

@@ -29,7 +29,7 @@ class LogController extends Controller
 
         return response()->json([
             'message' => 'Create log success.',
-            'data' => LogResource::make($log)
+            'data' => new LogResource($log)
         ], 201);
     }
 
@@ -40,7 +40,7 @@ class LogController extends Controller
     {
         return response()->json([
             'message' => 'Get log success.',
-            'data' => LogResource::make($log)
+            'data' => new LogResource($log)
         ], 200);
     }
 
@@ -53,7 +53,7 @@ class LogController extends Controller
 
         return response()->json([
             'message' => 'Update log success.',
-            'data' => LogResource::make($log->refresh())
+            'data' => new LogResource($log->refresh())
         ], 200);
     }
 
@@ -66,7 +66,7 @@ class LogController extends Controller
 
         return response()->json([
             'message' => 'delete log success.',
-            'data' => LogResource::make($log)
+            'data' => new LogResource($log)
         ], 200);
     }
 }

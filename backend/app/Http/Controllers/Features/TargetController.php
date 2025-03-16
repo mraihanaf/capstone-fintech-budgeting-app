@@ -29,7 +29,7 @@ class TargetController extends Controller
 
         return response()->json([
             'message' => 'Create target success.',
-            'data' => TargetResource::make($target)
+            'data' => new TargetResource($target)
         ], 201);
     }
 
@@ -40,7 +40,7 @@ class TargetController extends Controller
     {
         return response()->json([
             'message' => 'Get target success.',
-            'data' => TargetResource::make($target)
+            'data' => new TargetResource($target)
         ], 200);
     }
 
@@ -53,7 +53,7 @@ class TargetController extends Controller
 
         return response()->json([
             'message' => 'Update target success.',
-            'data' => TargetResource::make($target->refresh())
+            'data' => new TargetResource($target->refresh())
         ], 200);
     }
 
@@ -66,7 +66,7 @@ class TargetController extends Controller
 
         return response()->json([
             'message' => 'delete target success.',
-            'data' => TargetResource::make($target)
+            'data' => new TargetResource($target)
         ], 200);
     }
 }

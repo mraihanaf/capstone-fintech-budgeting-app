@@ -29,7 +29,7 @@ class TransactionController extends Controller
 
         return response()->json([
             'message' => 'Create transaction success.',
-            'data' => TransactionResource::make($transaction)
+            'data' => new TransactionResource($transaction)
         ], 201);
     }
 
@@ -40,7 +40,7 @@ class TransactionController extends Controller
     {
         return response()->json([
             'message' => 'Get transaction success.',
-            'data' => TransactionResource::make($transaction)
+            'data' => new TransactionResource($transaction)
         ], 200);
     }
 
@@ -53,7 +53,7 @@ class TransactionController extends Controller
 
         return response()->json([
             'message' => 'Update transaction success.',
-            'data' => TransactionResource::make($transaction->refresh())
+            'data' => new TransactionResource($transaction->refresh())
         ], 200);
     }
 
@@ -66,7 +66,7 @@ class TransactionController extends Controller
 
         return response()->json([
             'message' => 'delete transaction success.',
-            'data' => TransactionResource::make($transaction)
+            'data' => new TransactionResource($transaction)
         ], 200);
     }
 }

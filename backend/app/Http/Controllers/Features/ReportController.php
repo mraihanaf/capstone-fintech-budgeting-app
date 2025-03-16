@@ -29,7 +29,7 @@ class ReportController extends Controller
 
         return response()->json([
             'message' => 'Create report success.',
-            'data' => ReportResource::make($report)
+            'data' => new ReportResource($report)
         ], 201);
     }
 
@@ -40,7 +40,7 @@ class ReportController extends Controller
     {
         return response()->json([
             'message' => 'Get report success.',
-            'data' => ReportResource::make($report)
+            'data' => new ReportResource($report)
         ], 200);
     }
 
@@ -53,7 +53,7 @@ class ReportController extends Controller
 
         return response()->json([
             'message' => 'Update report success.',
-            'data' => ReportResource::make($report->refresh())
+            'data' => new ReportResource($report->refresh())
         ], 200);
     }
 
@@ -66,7 +66,7 @@ class ReportController extends Controller
 
         return response()->json([
             'message' => 'delete report success.',
-            'data' => ReportResource::make($report)
+            'data' => new ReportResource($report)
         ]);
     }
 }
