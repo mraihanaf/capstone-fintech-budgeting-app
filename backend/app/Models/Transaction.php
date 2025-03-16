@@ -8,6 +8,7 @@ class Transaction extends Model
 {
     protected $table = 'transactions';
     protected $fillable = ['user_id','category_id','amount','type','description','transaction_date','is_recurring'];
+    protected $with = ['user','category'];
 
     public function user(){
         return $this->belongsTo(User::class);

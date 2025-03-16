@@ -29,6 +29,8 @@ class User extends Authenticatable
         'phone'
     ];
 
+    protected $with = ['transactions', 'targets', 'reports', 'categories', 'logs', 'recommendations', 'budgets'];
+
 
     /**
      * The attributes that should be hidden for serialization.
