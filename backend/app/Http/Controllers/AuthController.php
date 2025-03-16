@@ -2,64 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Notifications\ResetPasswordNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
-
-    public function register(Request $request)
+    public function register(UserRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'phone' => 'string|max:20',
-            'password' => 'required'
-        ]);
+        $validated = $request->validated();
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone
-        ]);
+        $validated["password"] = Hash::make($validated["password"]);
+        $user = User::create($validated);
 
-        return response()->json(['user' => $user, 'token' => $user->createToken($request->email)->plainTextToken]);
+        Auth::login($user);
+        $token = $user->createToken($validated['email'])->plainTextToken;
+
+        return response()->json([
+            'message' => 'User register success.',
+            'data' => new UserResource($user),
+            'token' => $token
+        ], 200);
     }
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
+        $validated = $request->validated();
 
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+        if (!Auth::attempt($validated)) {
+            return response()->json([
+                'message' => 'Invalid email or password.'
+            ], 401);
         }
 
-        return response()->json(['token' => $user->createToken($request->email)->plainTextToken]);
+        $user = Auth::user();
+        $token = $user->createToken($validated['email'])->plainTextToken;
+
+        return response()->json([
+            'message' => 'User login success.',
+            'data' => new UserResource($user),
+            'token' => $token
+        ], 200);
     }
 
-    public function user(Request $request) {
-        return response()->json(['user' => $request->user()]);
-    }
-
-    public function google_redirect() {
+    public function google_redirect()
+    {
         return Socialite::driver('google')
             ->with(['prompt' => 'select_account'])
             ->redirect();
     }
 
-
-    public function google_callback() {
-
+    public function google_callback()
+    {
         // INI MERAH stateless() NYA BIARIN AJA GPP MASIH JALAN GK ADA ERROR KOK
         $googleUser = Socialite::driver('google')->stateless()->user();
 
@@ -69,60 +67,25 @@ class AuthController extends Controller
             $user = User::create([
                 'name' => $googleUser->name,
                 'email' => $googleUser->email,
-                'google_id' => $googleUser->id,
                 'password' => Hash::make('password')
             ]);
         }
 
         $token = $user->createToken($googleUser->email)->plainTextToken;
 
-
         return response()->json([
-            'token' => $token,
-            'user' => $user
-        ]);
+            'message' => 'User login success.',
+            'data' => new UserResource($user),
+            'token' => $token
+        ], 200);
     }
 
-    public function requestPasswordReset(Request $request)
+    public function logout(Request $request)
     {
-        $request->validate(['email' => 'required|email|exists:users,email']);
-
-        $user = User::where('email', $request->email)->first();
-
-        if ($user) {
-            $token = Password::createToken($user);
-            $user->notify(new ResetPasswordNotification($token));
-
-            return response()->json(['message' => 'Link reset password telah dikirim ke email Anda.']);
-        }
-
-        return response()->json(['message' => 'Email tidak ditemukan'], 404);
-    }
-
-    public function resetPassword(Request $request)
-    {
-    $request->validate([
-        'email' => 'required|email|exists:users,email',
-        'token' => 'required',
-        'password' => 'required|min:8|confirmed',
-    ]);
-
-    $status = Password::reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-        function ($user, $password) {
-            $user->password = bcrypt($password);
-            $user->save();
-        }
-    );
-
-    return $status === Password::PASSWORD_RESET
-        ? response()->json(['message' => 'Password berhasil direset.'])
-        : response()->json(['message' => 'Token tidak valid atau expired.'], 400);
-    }
-
-    public function logout(Request $request) {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json(['message' => 'Logout successful']);
+        return response()->json([
+            'message' => 'User logout success.'
+        ], 200);
     }
 }
