@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Features;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RecommendationRequest extends FormRequest
+class CategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,8 @@ class RecommendationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'recommendation' => 'required|in:monthly,yearly',
+            'name' => 'required|string|max:100',
+            'type' => 'required|in:income,expense',
         ];
     }
 }

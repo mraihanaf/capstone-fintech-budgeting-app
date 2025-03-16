@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TargetRequest extends FormRequest
+class UserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,10 @@ class TargetRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'target_amount' => 'required|numeric|min:0',
-            'saved_amount' => 'required|numeric|min:0',
-            'deadline' => 'required|date',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+            'balance' => 'numeric|min:0',
+            'phone' => 'nullable|string|max:20',
         ];
     }
 }
