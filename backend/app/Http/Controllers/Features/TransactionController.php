@@ -17,7 +17,7 @@ class TransactionController extends Controller
     public function index(TransactionFilterRequest $request)
     {
         $validated = $request->validated();
-        
+
         $transactions = Transaction::query()
             ->where('user_id', auth('api')->id())
             ->when($validated['is_recurring'] ?? null, fn($q) => $q->where('is_recurring', $validated['is_recurring']))
@@ -35,7 +35,8 @@ class TransactionController extends Controller
 
                 return $q->where('transaction_date', '>=', $date);
             })
-            ->when($validated['sort_by'] || $validated['sort_order'], fn($q) => $q->orderBy($validated['sort_by'] ?? 'transaction_date', $validated['sort_order'] ?? 'asc'))
+            ->when($validated['sort_by'] ?? null, fn($q) => $q->orderBy($validated['sort_by'] ?? 'transaction_date', $validated['sort_order'] ?? 'asc'))
+            ->when($validated['sort_order'] ?? null, fn($q) => $q->orderBy($validated['sort_by'] ?? 'transaction_date', $validated['sort_order'] ?? 'asc'))
             ->paginate($validated['per_page'] ?? 10);
 
         return response()->json([
