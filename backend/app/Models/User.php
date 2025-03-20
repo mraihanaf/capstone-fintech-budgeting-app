@@ -26,10 +26,10 @@ class User extends Authenticatable
         'email',
         'password',
         'balance',
-        'phone'
+        'phone',
+        'role',
+        'status',
     ];
-
-    protected $with = ['transactions', 'targets', 'reports', 'categories', 'logs', 'recommendations', 'budgets'];
 
 
     /**
