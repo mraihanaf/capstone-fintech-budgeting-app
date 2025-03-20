@@ -18,7 +18,7 @@ class LogController extends Controller
         $validated = $request->validated();
 
         $log = Log::query()
-            ->where($validated['user_id'], auth('api')->id())
+            ->where('user_id', auth('api')->id())
             ->when($validated['sort_by'] ?? null, fn($q) => $q->orderBy($validated['sort_by'] ?? 'created_at', $validated['sort_order'] ?? 'asc'))
             ->when($validated['sort_order'] ?? null, fn($q) => $q->orderBy($validated['sort_by'] ?? 'created_at', $validated['sort_order'] ?? 'asc'))
             ->paginate($validated['per_page'] ?? 10);
