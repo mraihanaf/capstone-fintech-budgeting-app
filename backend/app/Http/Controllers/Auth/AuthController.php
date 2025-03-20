@@ -41,6 +41,13 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+
+        if($user->status == 'deactive') {
+            return response()->json([
+                'message' => 'Your account is deactive, please contact admin to activated'
+            ], 403);
+        }
+
         $token = $user->createToken($validated['email'])->plainTextToken;
 
         return response()->json([

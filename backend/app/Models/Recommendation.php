@@ -9,7 +9,6 @@ class Recommendation extends Model
 {
     use HasFactory;
     protected $fillable = ['user_id', 'recommedation'];
-    protected $with = ['user'];
 
     public function user()
     {

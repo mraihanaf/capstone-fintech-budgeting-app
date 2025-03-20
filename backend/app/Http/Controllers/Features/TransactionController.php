@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Features\TransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
