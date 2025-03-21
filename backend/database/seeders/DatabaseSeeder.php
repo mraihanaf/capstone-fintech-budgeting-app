@@ -24,6 +24,6 @@ class DatabaseSeeder extends Seeder
         Category::factory()->count(5)->create();
         Transaction::factory()->count(50)->create();
         // Recommendation::factory()->count(10)->create();
-        Log::factory()->count(30)->create();
+        // Log::factory()->count(30)->create();
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Password\ChangeRequest;
 use App\Http\Requests\Password\ForgotRequest;
 use App\Http\Requests\Password\ResetRequest;
+use App\Http\Resources\LogResource;
 use App\Models\User;
 use App\Notifications\ResetPasswordNotification;
 use Illuminate\Support\Facades\Auth;
@@ -29,8 +30,14 @@ class PasswordController extends Controller
         $token = Password::createToken($user);
         $user->notify(new ResetPasswordNotification($token));
 
+        $log = auth('api')->user()->logs()->create([
+            'action' => "Forgot password",
+            'details' => "Request change password"
+        ]);
+
         return response()->json([
-            'message' => 'Password reset link has been sent to your email.'
+            'message' => 'Password reset link has been sent to your email.',
+            'log' => new LogResource($log)
         ], 200);
     }
 
@@ -46,9 +53,20 @@ class PasswordController extends Controller
             }
         );
 
+        $log = auth('api')->user()->logs()->create([
+            'action' => "Reset Password",
+            'details' => $status === Password::PASSWORD_RESET ? 'Reset Password success' : 'Reset Password failed'
+        ]);
+
         return $status === Password::PASSWORD_RESET
-            ? response()->json(['message' => 'Reset password success.'],201)
-            : response()->json(['message' => 'Invalid or expired token.'], 400);
+            ? response()->json([
+                'message' => 'Reset password success.',
+                'log' => new LogResource($log)
+            ], 201)
+            : response()->json([
+                'message' => 'Invalid or expired token.',
+                'log' => new LogResource($log)
+            ], 400);
     }
 
     public function change(ChangeRequest $request)
@@ -65,8 +83,13 @@ class PasswordController extends Controller
             'password' => Hash::make($validated['new_password']),
         ]);
 
+        $log = auth('api')->user()->logs()->create([
+            'action' => 'Change password',
+            'details' => 'Change password success'
+        ]);
+
         return response()->json([
-            'message' => 'Password updated successfully'
+            'message' => 'Password changed successfully'
         ], 200);
     }
 }
