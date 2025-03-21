@@ -65,6 +65,11 @@ class TransactionController extends Controller
 
         $transaction = auth('api')->user()->transactions()->create($validated);
 
+        $user = auth('api')->user();
+        $transaction['type'] === 'income' ?
+            $user->update(['balance' => $user->balance + $transaction['amount']]) :
+            $user->update(['balance' => $user->balance - $transaction['amount']]);
+
         $log = auth('api')->user()->logs()->create([
             'action' => "Add {$validated['type']}",
             'details' => "{$category['name']} - Rp{$validated['amount']}"
@@ -99,9 +104,14 @@ class TransactionController extends Controller
 
         $transaction->update($validated);
 
+        $user = auth('api')->user();
+        $transaction['type'] === 'income' ?
+            $user->update(['balance' => $user->balance + $transaction['amount']]) :
+            $user->update(['balance' => $user->balance - $transaction['amount']]);
+
         $log = auth('api')->user()->logs()->create([
             'action' => "Update {$validated['type']}",
-            'details' => "{$category['name']} - {$oldAmount} -> Rp{$validated['amount']}",
+            'details' => "{$category['name']} - Rp{$oldAmount} -> Rp{$validated['amount']}",
         ]);
 
         return response()->json([
@@ -119,6 +129,11 @@ class TransactionController extends Controller
         $category = Category::where('id', $transaction->category_id)->first();
 
         $transaction->delete();
+
+        $user = auth('api')->user();
+        $transaction['type'] === 'income' ?
+            $user->update(['balance' => $user->balance - $transaction['amount']]) :
+            $user->update(['balance' => $user->balance + $transaction['amount']]);
 
         $log = auth('api')->user()->logs()->create([
             'action' => "Delete {$transaction->type}",
