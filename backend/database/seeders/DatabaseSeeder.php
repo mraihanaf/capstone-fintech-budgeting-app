@@ -23,10 +23,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->count(10)->create();
         Category::factory()->count(5)->create();
         Transaction::factory()->count(50)->create();
-        Budget::factory()->count(20)->create();
-        Target::factory()->count(15)->create();
-        Report::factory()->count(10)->create();
-        Recommendation::factory()->count(10)->create();
+        // Recommendation::factory()->count(10)->create();
         Log::factory()->count(30)->create();
     }
 }
