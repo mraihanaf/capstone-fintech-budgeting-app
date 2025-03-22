@@ -20,7 +20,7 @@ class LogFactory extends Factory
         return [
             'user_id' => User::factory(),
             'action' => fake()->word(),
-            'details' => fake()->optional()->text(),
+            'details' => fake()->text(),
             'created_at' => now(),
             'updated_at' => now(),
         ];

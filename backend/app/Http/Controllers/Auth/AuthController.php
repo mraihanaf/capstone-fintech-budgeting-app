@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\LogResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -24,9 +25,15 @@ class AuthController extends Controller
         Auth::login($user);
         $token = $user->createToken($validated['email'])->plainTextToken;
 
+        $log = auth('api')->user()->logs()->create([
+            'action' => "Register",
+            'details' => "User {$user->id} - {$user->email}"
+        ]);
+
         return response()->json([
             'message' => 'User register success.',
             'data' => new UserResource($user),
+            'log' => new LogResource($log),
             'token' => $token
         ], 200);
     }
@@ -43,9 +50,15 @@ class AuthController extends Controller
         $user = Auth::user();
         $token = $user->createToken($validated['email'])->plainTextToken;
 
+        $log = auth('api')->user()->logs()->create([
+            'action' => "Login",
+            'details' => "User {$user->id} - {$user->email}"
+        ]);
+
         return response()->json([
             'message' => 'User login success.',
             'data' => new UserResource($user),
+            'log' => new LogResource($log),
             'token' => $token
         ], 200);
     }
@@ -74,9 +87,15 @@ class AuthController extends Controller
 
         $token = $user->createToken($googleUser->email)->plainTextToken;
 
+        $log = auth('api')->user()->logs()->create([
+            'action' => "Login",
+            'details' => "User {$user->id} - {$user->email}"
+        ]);
+
         return response()->json([
             'message' => 'User login success.',
             'data' => new UserResource($user),
+            'log' => new LogResource($log),
             'token' => $token
         ], 200);
     }
@@ -85,8 +104,14 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
+        $log = auth('api')->user()->logs()->create([
+            'action' => "Logout",
+            'details' => "User {$request->id} - {$request->email}"
+        ]);
+
         return response()->json([
-            'message' => 'User logout success.'
+            'message' => 'User logout success.',
+            'log' => new LogResource($log)
         ], 200);
     }
 }

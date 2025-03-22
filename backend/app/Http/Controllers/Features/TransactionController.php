@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Features;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Features\TransactionRequest;
 use App\Http\Requests\Filters\TransactionFilterRequest;
+use App\Http\Resources\LogResource;
 use App\Http\Resources\TransactionResource;
+use App\Models\Category;
 use App\Models\Transaction;
 use Carbon\Carbon;
 
@@ -58,11 +60,25 @@ class TransactionController extends Controller
      */
     public function store(TransactionRequest $request)
     {
-        $transaction = auth('api')->user()->transactions()->create($request->validated());
+        $validated = $request->validated();
+        $category = Category::where('id', $validated['category_id'])->first();
+
+        $transaction = auth('api')->user()->transactions()->create($validated);
+
+        $user = auth('api')->user();
+        $transaction['type'] === 'income' ?
+            $user->update(['balance' => $user->balance + $transaction['amount']]) :
+            $user->update(['balance' => $user->balance - $transaction['amount']]);
+
+        $log = auth('api')->user()->logs()->create([
+            'action' => "Add {$validated['type']}",
+            'details' => "{$category['name']} - Rp{$validated['amount']}"
+        ]);
 
         return response()->json([
             'message' => 'Create transaction success.',
-            'data' => new TransactionResource($transaction)
+            'data' => new TransactionResource($transaction),
+            'log' => new LogResource($log)
         ], 201);
     }
 
@@ -82,11 +98,26 @@ class TransactionController extends Controller
      */
     public function update(TransactionRequest $request, Transaction $transaction)
     {
-        $transaction->update($request->validated());
+        $validated = $request->validated();
+        $oldAmount = $transaction->amount;
+        $category = Category::where('id', $validated['category_id'])->first();
+
+        $transaction->update($validated);
+
+        $user = auth('api')->user();
+        $transaction['type'] === 'income' ?
+            $user->update(['balance' => $user->balance + $transaction['amount']]) :
+            $user->update(['balance' => $user->balance - $transaction['amount']]);
+
+        $log = auth('api')->user()->logs()->create([
+            'action' => "Update {$validated['type']}",
+            'details' => "{$category['name']} - Rp{$oldAmount} -> Rp{$validated['amount']}",
+        ]);
 
         return response()->json([
             'message' => 'Update transaction success.',
-            'data' => new TransactionResource($transaction->refresh())
+            'data' => new TransactionResource($transaction->refresh()),
+            'log' => new LogResource($log)
         ], 200);
     }
 
@@ -95,11 +126,24 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
+        $category = Category::where('id', $transaction->category_id)->first();
+
         $transaction->delete();
+
+        $user = auth('api')->user();
+        $transaction['type'] === 'income' ?
+            $user->update(['balance' => $user->balance - $transaction['amount']]) :
+            $user->update(['balance' => $user->balance + $transaction['amount']]);
+
+        $log = auth('api')->user()->logs()->create([
+            'action' => "Delete {$transaction->type}",
+            'details' => "{$category['name']} - Rp{$transaction->amount}"
+        ]);
 
         return response()->json([
             'message' => 'delete transaction success.',
-            'data' => new TransactionResource($transaction)
+            'data' => new TransactionResource($transaction),
+            'log' => new LogResource($log)
         ], 200);
     }
 }

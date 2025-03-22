@@ -23,7 +23,7 @@ class LogRequest extends FormRequest
     {
         return [
             'action' => 'required|string|max:255',
-            'details' => 'nullable|string',
+            'details' => 'required|string',
         ];
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Requests\Filters\CategoryFilterRequest;
 use App\Models\Category;
 
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\LogResource;
 
 class CategoryController extends Controller
 {
@@ -46,9 +47,15 @@ class CategoryController extends Controller
     {
         $category = auth('api')->user()->categories()->create($request->validated());
 
+        $log = auth('api')->user()->logs()->create([
+            'action' => "Add category",
+            'details' => $category['name']
+        ]);
+
         return response()->json([
             'message' => 'Create category success.',
-            'data' => new CategoryResource($category)
+            'data' => new CategoryResource($category),
+            'log' => new LogResource($log)
         ], 201);
     }
 
@@ -68,11 +75,18 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request, Category $category)
     {
+        $oldName = $category->name;
         $category->update($request->validated());
+
+        $log = auth('api')->user()->logs()->create([
+            'action' => "Update category",
+            'details' => $oldName . '->' . $category['name']
+        ]);
 
         return response()->json([
             'message' => 'Update category success.',
-            'data' => new CategoryResource($category->refresh())
+            'data' => new CategoryResource($category->refresh()),
+            'log' => new LogResource($log)
         ], 200);
     }
 
@@ -83,9 +97,15 @@ class CategoryController extends Controller
     {
         $category->delete();
 
+        $log = auth('api')->user()->logs()->create([
+            'action' => "Delete category",
+            'details' => $category['name']
+        ]);
+
         return response()->json([
             'message' => 'delete category success.',
-            'data' => new CategoryResource($category)
+            'data' => new CategoryResource($category),
+            'log' => new LogResource($log)
         ], 200);
     }
 }
