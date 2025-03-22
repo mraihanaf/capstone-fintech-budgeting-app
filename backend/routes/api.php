@@ -33,6 +33,8 @@ Route::prefix('profile')->group(function () {
     Route::post('update', [ProfileController::class, 'update'])->middleware('auth:sanctum');
 });
 
+Route::get('users', [UserController::class, 'show'])->middleware('auth:sanctum');
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('transactions', TransactionController::class);
     Route::apiResource('categories', CategoryController::class);

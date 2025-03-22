@@ -16,7 +16,7 @@ class BudgetController extends Controller
     {
         return response()->json([
             'message' => 'Get all budgets success.',
-            'data' => BudgetResource::collection(Budget::with('category')->get())
+            'data' => BudgetResource::collection(Budget::all())
         ], 200);
     }
 
