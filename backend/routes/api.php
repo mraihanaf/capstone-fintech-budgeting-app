@@ -2,12 +2,9 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\PasswordController;
-use App\Http\Controllers\Features\BudgetController;
 use App\Http\Controllers\Features\CategoryController;
 use App\Http\Controllers\Features\LogController;
 use App\Http\Controllers\Features\RecommendationController;
-use App\Http\Controllers\Features\ReportController;
-use App\Http\Controllers\Features\TargetController;
 use App\Http\Controllers\Features\TransactionController;
 use App\Http\Controllers\Users\ProfileController;
 use App\Http\Controllers\Users\UserController;
@@ -38,9 +35,6 @@ Route::get('users', [UserController::class, 'show'])->middleware('auth:sanctum')
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('transactions', TransactionController::class);
     Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('budgets', BudgetController::class);
-    Route::apiResource('targets', TargetController::class);
-    Route::apiResource('reports', ReportController::class);
     Route::apiResource('recommendations', RecommendationController::class);
     Route::apiResource('logs', LogController::class);
 });

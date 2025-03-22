@@ -29,7 +29,7 @@ class User extends Authenticatable
         'phone'
     ];
 
-    protected $with = ['transactions', 'targets', 'reports', 'categories', 'logs', 'recommendations', 'budgets'];
+    protected $with = ['transactions', 'categories', 'logs', 'recommendations'];
 
 
     /**
@@ -65,16 +65,6 @@ class User extends Authenticatable
         return $this->hasMany(Transaction::class);
     }
 
-    public function targets()
-    {
-        return $this->hasMany(Target::class);
-    }
-
-    public function reports()
-    {
-        return $this->hasMany(Report::class);
-    }
-
     public function categories()
     {
         return $this->hasMany(Category::class);
@@ -88,10 +78,5 @@ class User extends Authenticatable
     public function recommendations()
     {
         return $this->hasMany(Recommendation::class);
-    }
-
-    public function budgets()
-    {
-        return $this->hasMany(Budget::class);
     }
 }
