@@ -9,7 +9,7 @@ class Category extends Model
 {
 
     use HasFactory;
-    protected $fillable = ['user_id','name','type'];
+    protected $fillable = ['user_id', 'name', 'type'];
 
     public function user()
     {
@@ -19,5 +19,13 @@ class Category extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function scopeFilters($query, array $filters)
+    {
+        return $query
+            ->when($filters['type'] ?? null, fn($q) => $q->where('type', $filters['type']))
+            ->when($filters['sort_by'] ?? null, fn($q) => $q->orderBy($filters['sort_by']))
+            ->when($filters['sort_order'] ?? null, fn($q) => $q->orderBy($filters['sort_by'] ?? 'id', $filters['sort_order']));
     }
 }
