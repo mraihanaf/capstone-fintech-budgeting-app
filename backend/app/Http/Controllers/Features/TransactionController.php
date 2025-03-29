@@ -15,9 +15,16 @@ class TransactionController extends Controller
      */
     public function index()
     {
+
+        $user = auth()->user();
+
+        $transactions = Transaction::where('user_id', $user->id)
+            ->with('category')
+            ->get();
+
         return response()->json([
-            'message' => 'Get all transactions success.',
-            'data' => TransactionResource::collection(Transaction::with('category')->get())
+            'message' => 'Get user transactions success.',
+            'data' => TransactionResource::collection($transactions)
         ], 200);
     }
 

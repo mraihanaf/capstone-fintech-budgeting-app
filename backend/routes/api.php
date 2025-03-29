@@ -13,7 +13,9 @@ use App\Http\Controllers\Users\ProfileController;
 use App\Http\Controllers\Users\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Middleware\CheckTokenExpiry;
 use Illuminate\Support\Facades\Route;
+use Tymon\JWTAuth\Http\Middleware\Check;
 
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -37,7 +39,7 @@ Route::prefix('profile')->group(function () {
 
 Route::middleware(['auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::get('admin/users', [AdminController::class, 'getUsers']);
-    Route::get('admin/users/{id}', [AdminController::class, 'getUserById']);
+    Route::get('admin/users/{email}', [AdminController::class, 'getUserById']);
     Route::patch('admin/users/{id}/deactivate', [AdminController::class, 'deactivateUser']);
 
     Route::get('admin/transactions', [AdminController::class, 'getAllTransactions']);
@@ -49,7 +51,7 @@ Route::middleware(['auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::get('admin/logs', [AdminController::class, 'getLogs']);
 });
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware([CheckTokenExpiry::class, 'auth:sanctum'])->group(function () {
     Route::apiResource('transactions', TransactionController::class);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('budgets', BudgetController::class);

@@ -30,8 +30,8 @@ class AdminController extends Controller
         return response()->json(['message' => 'User retrieved successfully', 'data' => $user], 200);
     }
 
-    public function deactivateUser($id) {
-        $user = User::find($id);
+    public function deactivateUser($email) {
+        $user = User::where('email', $email)->first();
 
         if (!$user) {
             return response()->json([

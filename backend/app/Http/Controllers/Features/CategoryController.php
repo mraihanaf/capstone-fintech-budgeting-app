@@ -15,9 +15,15 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        $user = auth()->user();
+
+        $category = Category::where('user_id', $user->id)
+            ->with('user')
+            ->get();
+
         return response()->json([
             'message' => 'Get all categories success.',
-            'data' => CategoryResource::collection(Category::all())
+            'data' => CategoryResource::collection($category)
         ], 200);
     }
 
