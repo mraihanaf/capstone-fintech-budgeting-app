@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Features;
 
+use App\Classes\QueryFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Features\TransactionRequest;
 use App\Http\Requests\Filters\TransactionFilterRequest;
@@ -10,6 +11,7 @@ use App\Http\Resources\TransactionResource;
 use App\Models\Category;
 use App\Models\Transaction;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class TransactionController extends Controller
 {
@@ -19,38 +21,29 @@ class TransactionController extends Controller
     public function index(TransactionFilterRequest $request)
     {
         $validated = $request->validated();
+        $userId = auth('api')->id();
+        $encodedValidated = md5(json_encode($validated));
 
-        $transactions = Transaction::query()
-            ->where('user_id', auth('api')->id())
-            ->when($validated['is_recurring'] ?? null, fn($q) => $q->where('is_recurring', $validated['is_recurring']))
-            ->when($validated['category_id'] ?? null, fn($q) => $q->where('category_id', $validated['category_id']))
-            ->when($validated['type'] ?? null, fn($q) => $q->where('type', $validated['type']))
-            ->when($validated['min_amount'] ?? null, fn($q) => $q->where('amount', '>=', $validated['min_amount']))
-            ->when($validated['max_amount'] ?? null, fn($q) => $q->where('amount', '<=', $validated['max_amount']))
-            ->when($validated['date_range'] ?? null, function ($q) use ($validated) {
-                $date = match ($validated['date_range']) {
-                    '1day' => Carbon::now()->subDay()->format('Y-m-d'),
-                    '3days' => Carbon::now()->subDays(3)->format('Y-m-d'),
-                    '1week' => Carbon::now()->subWeek()->format('Y-m-d'),
-                    '1month' => Carbon::now()->subMonth()->format('Y-m-d'),
-                };
-
-                return $q->where('transaction_date', '>=', $date);
-            })
-            ->when($validated['sort_by'] ?? null, fn($q) => $q->orderBy($validated['sort_by'] ?? 'transaction_date', $validated['sort_order'] ?? 'asc'))
-            ->when($validated['sort_order'] ?? null, fn($q) => $q->orderBy($validated['sort_by'] ?? 'transaction_date', $validated['sort_order'] ?? 'asc'))
-            ->paginate($validated['per_page'] ?? 10);
+        $transactions = Cache::remember(
+            "transactions_{$userId}_{$encodedValidated}",
+            now()->addMinutes(15),
+            fn() =>
+            Transaction::where('user_id', $userId)
+                ->filters($validated)
+                ->paginate($validated['per_page'] ?? 10)
+        );
 
         return response()->json([
             'message' => 'Get all transactions success.',
             'data' => TransactionResource::collection($transactions),
             'pagination' => [
+                'total' => $transactions->total(),
+                'per_page' => $transactions->perPage(),
                 'current_page' => $transactions->currentPage(),
                 'last_page' => $transactions->lastPage(),
-                'per_page' => $transactions->perPage(),
-                'total' => $transactions->total(),
                 'next_page_url' => $transactions->nextPageUrl(),
                 'prev_page_url' => $transactions->previousPageUrl(),
+                'path' => $transactions->path(),
             ],
         ], 200);
     }
@@ -61,14 +54,17 @@ class TransactionController extends Controller
     public function store(TransactionRequest $request)
     {
         $validated = $request->validated();
-        $category = Category::where('id', $validated['category_id'])->first();
+        $user = auth('api')->user();
+
+        $category = Category::findOrFail($validated['category_id']);
 
         $transaction = auth('api')->user()->transactions()->create($validated);
+        Cache::tags(['transactions'])->flush();
 
-        $user = auth('api')->user();
-        $transaction['type'] === 'income' ?
-            $user->update(['balance' => $user->balance + $transaction['amount']]) :
-            $user->update(['balance' => $user->balance - $transaction['amount']]);
+        $newBalance = $transaction['type'] === 'income' ?
+            $user->balance + $transaction['amount'] :
+            $user->balance - $transaction['amount'];
+        $user->update(['balance' => $newBalance]);
 
         $log = auth('api')->user()->logs()->create([
             'action' => "Add {$validated['type']}",
@@ -100,14 +96,17 @@ class TransactionController extends Controller
     {
         $validated = $request->validated();
         $oldAmount = $transaction->amount;
-        $category = Category::where('id', $validated['category_id'])->first();
+
+        $category = Category::findOrFail($validated['category_id']);
 
         $transaction->update($validated);
+        Cache::tags(['transactions'])->flush();
 
         $user = auth('api')->user();
-        $transaction['type'] === 'income' ?
-            $user->update(['balance' => $user->balance + $transaction['amount']]) :
-            $user->update(['balance' => $user->balance - $transaction['amount']]);
+        $newBalance = $transaction['type'] === 'income' ?
+            $user->balance + $transaction['amount'] :
+            $user->balance - $transaction['amount'];
+        $user->update(['balance' => $newBalance]);
 
         $log = auth('api')->user()->logs()->create([
             'action' => "Update {$validated['type']}",
@@ -126,14 +125,16 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        $category = Category::where('id', $transaction->category_id)->first();
+        $category = Category::findOrFail($transaction->category_id);
 
         $transaction->delete();
+        Cache::tags(['transactions'])->flush();
 
         $user = auth('api')->user();
-        $transaction['type'] === 'income' ?
-            $user->update(['balance' => $user->balance - $transaction['amount']]) :
-            $user->update(['balance' => $user->balance + $transaction['amount']]);
+        $newBalance = $transaction['type'] === 'income' ?
+            $user->balance - $transaction['amount'] :
+            $user->balance + $transaction['amount'];
+        $user->update(['balance' => $newBalance]);
 
         $log = auth('api')->user()->logs()->create([
             'action' => "Delete {$transaction->type}",

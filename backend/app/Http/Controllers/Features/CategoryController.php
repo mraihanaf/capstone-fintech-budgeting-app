@@ -9,6 +9,7 @@ use App\Models\Category;
 
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\LogResource;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
@@ -18,24 +19,29 @@ class CategoryController extends Controller
     public function index(CategoryFilterRequest $request)
     {
         $validated = $request->validated();
+        $userId = auth('api')->id();
+        $encodedValidated = md5(json_encode($validated));
 
-        $category = Category::query()
-            ->where('user_id', auth('api')->id())
-            ->when($validated['type'] ?? null, fn($q) => $q->where('type', $validated['type']))
-            ->when($validated['sort_by'] ?? null, fn($q) => $q->orderBy($validated['sort_by'] ?? 'created_at', $validated['sort_order'] ?? 'asc'))
-            ->when($validated['sort_order'] ?? null, fn($q) => $q->orderBy($validated['sort_by'] ?? 'created_at', $validated['sort_order'] ?? 'asc'))
-            ->paginate($validated['per_page'] ?? 10);
+        $category = Cache::remember(
+            "categories_{$userId}_{$encodedValidated}",
+            now()->addMinutes(15),
+            fn() =>
+            Category::where('user_id', $userId)
+                ->filters($validated)
+                ->paginate($validated['per_page'] ?? 10)
+        );
 
         return response()->json([
             'message' => 'Get all categories success.',
             'data' => CategoryResource::collection($category),
             'pagination' => [
+                'total' => $category->total(),
+                'per_page' => $category->perPage(),
                 'current_page' => $category->currentPage(),
                 'last_page' => $category->lastPage(),
-                'per_page' => $category->perPage(),
-                'total' => $category->total(),
                 'next_page_url' => $category->nextPageUrl(),
                 'prev_page_url' => $category->previousPageUrl(),
+                'path' => $category->path(),
             ],
         ], 200);
     }
@@ -46,6 +52,7 @@ class CategoryController extends Controller
     public function store(CategoryRequest $request)
     {
         $category = auth('api')->user()->categories()->create($request->validated());
+        Cache::tags(['categories'])->flush();
 
         $log = auth('api')->user()->logs()->create([
             'action' => "Add category",
@@ -77,6 +84,7 @@ class CategoryController extends Controller
     {
         $oldName = $category->name;
         $category->update($request->validated());
+        Cache::tags(['categories'])->flush();
 
         $log = auth('api')->user()->logs()->create([
             'action' => "Update category",
@@ -96,6 +104,7 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         $category->delete();
+        Cache::tags(['categories'])->flush();
 
         $log = auth('api')->user()->logs()->create([
             'action' => "Delete category",

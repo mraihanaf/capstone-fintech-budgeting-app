@@ -14,4 +14,11 @@ class Log extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function scopeFilters($query, array $filters)
+    {
+        return $query
+            ->when($filters['sort_by'] ?? null, fn($q) => $q->orderBy($filters['sort_by']))
+            ->when($filters['sort_order'] ?? null, fn($q) => $q->orderBy($filters['sort_by'] ?? 'id', $filters['sort_order']));
+    }
 }
