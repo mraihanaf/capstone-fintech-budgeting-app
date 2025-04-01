@@ -37,6 +37,7 @@ class Transaction extends Model
                     '3days' => Carbon::now()->subDays(3)->format('Y-m-d'),
                     '1week' => Carbon::now()->subWeek()->format('Y-m-d'),
                     '1month' => Carbon::now()->subMonth()->format('Y-m-d'),
+                    '1year' => Carbon::now()->subYear()->format('Y-m-d'),
                 };
 
                 return $q->where('transaction_date', '>=', $date);

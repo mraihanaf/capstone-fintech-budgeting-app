@@ -22,7 +22,7 @@ class RecommendationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'recommendation' => 'required|in:monthly,yearly',
+            // 'recommendation' => 'required|in:monthly,yearly',
         ];
     }
 }

@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Features\RecommendationRequest;
 use App\Models\Recommendation;
 use App\Http\Resources\RecommendationResource;
+use App\Models\Transaction;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
+use Mgcodeur\CurrencyConverter\Facades\CurrencyConverter;
 
 class RecommendationController extends Controller
 {
@@ -25,7 +29,68 @@ class RecommendationController extends Controller
      */
     public function store(RecommendationRequest $request)
     {
-        $recommendation = auth('api')->user()->recommendations()->create($request->validated());
+        function convertToUsd($amount)
+        {
+            return CurrencyConverter::convert($amount)->from('IDR')->to('USD')->get();
+        }
+
+        $annualIncome = Transaction::where('transaction_date', '>=', Carbon::now()->subYear()->format('Y-m-d'))->where('type', 'income')->sum('amount');
+
+        $monthlyInhandSalary = Transaction::where('transaction_date', '>=', Carbon::now()->subMonth()->format('Y-m-d'))->where('type', 'income')->sum('amount');
+
+        $numBankAccount = 0;
+
+        $numCreditCard = 0;
+
+        $interestRate = 0.0;
+
+        $numOfLoan = 0;
+
+        $delayFromDueDate = 0;
+
+        $numOfDelayedPayment = 0;
+
+        $changedCreditLimit = 0.0;
+
+        $numCreditInquiries = 0;
+
+        $outstandingDebt = 0.0;
+
+        $creditUtilizationRatio = 0.0;
+
+        $totalEmiPerMonth = 0.0;
+
+        $amountInvestedMonthly = 0.0;
+
+        $monthlyBalance = 0.0;
+
+        $creditMix = '';
+
+        $paymentOfMinAmount = '';
+
+        dd(convertToUsd($annualIncome));
+
+        $recommendation = Http::post('', [
+            # data angka
+            'Annual_Income' => convertToUsd($annualIncome),
+            'Monthly_Inhand_Salary' => convertToUsd($monthlyInhandSalary),
+            'Num_Bank_Accounts' => $numBankAccount,
+            'Num_Credit_Card' => $numCreditCard,
+            'Interest_Rate' => convertToUsd($interestRate),
+            'Num_of_Loan' => $numOfLoan,
+            'Delay_from_due_date' => $delayFromDueDate,
+            'Num_of_Delayed_Payment' => $numOfDelayedPayment,
+            'Changed_Credit_Limit' => convertToUsd($changedCreditLimit),
+            'Num_Credit_Inquiries' => $numCreditInquiries,
+            'Outstanding_Debt' => convertToUsd($outstandingDebt),
+            'Credit_Utilization_Ratio' => convertToUsd($creditUtilizationRatio),
+            'Total_EMI_per_month' => convertToUsd($totalEmiPerMonth),
+            'Amount_invested_monthly' => convertToUsd($amountInvestedMonthly),
+            'Monthly_Balance' => convertToUsd($monthlyBalance),
+            # data kategori
+            'Credit_Mix' => $creditMix,
+            'Payment_of_Min_Amount' => $paymentOfMinAmount,
+        ]);
 
         return response()->json([
             'message' => 'Create recommendation success.',
