@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Budget;
 use App\Models\Category;
 use App\Models\Log;
-use App\Models\Recommendation;
+use App\Models\Score;
 use App\Models\Report;
 use App\Models\Target;
 use App\Models\Transaction;
@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->count(10)->create();
         Category::factory()->count(5)->create();
         Transaction::factory()->count(50)->create();
-        // Recommendation::factory()->count(10)->create();
+        // Score::factory()->count(10)->create();
         // Log::factory()->count(30)->create();
     }
 }
