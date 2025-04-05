@@ -45,7 +45,7 @@ class ScoreController extends Controller
             'Payment_of_Min_Amount' => $validated['Payment_of_Min_Amount'],
         ];
 
-        $score = Http::post('http://capstone.rainetwork.my.id/predict', $requestBody);
+        $score = Http::post(env('ML_ENDPOINT'), $requestBody);
 
         $log = auth('api')->user()->logs()->create([
             'action' => "Check Score",
