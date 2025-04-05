@@ -40,7 +40,7 @@ Route::prefix('profile')->group(function () {
 Route::middleware(['auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::get('admin/users', [AdminController::class, 'getUsers']);
     Route::get('admin/users/{email}', [AdminController::class, 'getUserById']);
-    Route::patch('admin/users/{id}/deactivate', [AdminController::class, 'deactivateUser']);
+    Route::patch('admin/users/{email}/deactivate', [AdminController::class, 'deactivateUser']);
 
     Route::get('admin/transactions', [AdminController::class, 'getAllTransactions']);
     Route::delete('admin/transactions/{id}', [AdminController::class, 'deleteTransaction']);

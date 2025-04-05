@@ -13,9 +13,19 @@ use App\Models\Log;
 class AdminController extends Controller
 {
     public function getUsers() {
+        $users = User::paginate(10);
+
         return response()->json([
             'message' => 'Get user success.',
-            'data' => UserResource::collection(User::all())
+            'data' => UserResource::collection($users),
+            'pagination' => [
+                'total' => $users->total(),
+                'per_page' => $users->perPage(),
+                'current_page' => $users->currentPage(),
+                'last_page' => $users->lastPage(),
+                'next_page_url' => $users->nextPageUrl(),
+                'prev_page_url' => $users->previousPageUrl(),
+            ]
         ]);
     }
 
@@ -50,9 +60,15 @@ class AdminController extends Controller
     // TRANSACTION
     public function getAllTransactions()
     {
-        $transactions = Transaction::all();
-        return response()->json(['message' => 'Transactions retrieved successfully', 'data' => $transactions], 200);
+        $transactions = Transaction::with(['user', 'category'])->paginate(10);
+
+        return response()->json([
+            'message' => 'Transactions retrieved successfully',
+            'data' => $transactions
+        ], 200);
     }
+
+
 
     public function deleteTransaction($id)
     {
