@@ -23,7 +23,7 @@ class PasswordController extends Controller
 
         if (!$user) {
             return response()->json([
-                'message' => 'User with this email does not exist.'
+                'message' => 'User with this email does not exist.',
             ], 404);
         }
 

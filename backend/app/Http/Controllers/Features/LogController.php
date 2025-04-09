@@ -16,7 +16,7 @@ class LogController extends Controller
      */
     public function index(LogFilterRequest $request)
     {
-        $validated = $request->validated();
+        $validated = $request->validated(); 
         $userId = auth('api')->id();
         $encodedValidated = md5(json_encode($validated));
 

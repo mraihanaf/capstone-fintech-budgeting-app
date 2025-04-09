@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -48,6 +49,15 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+
+        if($user->status == 'deactive') {
+            return response()->json([
+                'message' => 'Your account is deactive, please contact admin to activated'
+            ], 403);
+        }
+
+        $user->tokens()->where('created_at', '<', now()->subDays(2))->delete();
+
         $token = $user->createToken($validated['email'])->plainTextToken;
 
         $log = auth('api')->user()->logs()->create([
@@ -55,11 +65,15 @@ class AuthController extends Controller
             'details' => "User {$user->id} - {$user->email}"
         ]);
 
+        $expiresAt = Carbon::now()->addDays(2);
+
+
         return response()->json([
             'message' => 'User login success.',
             'data' => new UserResource($user),
             'log' => new LogResource($log),
-            'token' => $token
+            'token' => $token,
+            'expires_at' => $expiresAt
         ], 200);
     }
 
@@ -92,12 +106,14 @@ class AuthController extends Controller
             'details' => "User {$user->id} - {$user->email}"
         ]);
 
-        return response()->json([
+        response()->json([
             'message' => 'User login success.',
             'data' => new UserResource($user),
             'log' => new LogResource($log),
             'token' => $token
         ], 200);
+
+        return redirect("http://localhost:5173/google-callback?token=$token");
     }
 
     public function logout(Request $request)

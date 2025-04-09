@@ -26,7 +26,9 @@ class User extends Authenticatable
         'email',
         'password',
         'balance',
-        'phone'
+        'phone',
+        'role',
+        'status',
     ];
 
     protected $with = ['transactions', 'categories', 'logs'];
