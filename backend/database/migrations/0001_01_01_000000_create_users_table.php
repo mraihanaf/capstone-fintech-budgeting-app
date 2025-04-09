@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('password');
             $table->decimal('balance', 15, 2)->default(0);
             $table->string('phone')->nullable();
+            $table->string('role')->default('user');
+            $table->string('status')->default('active');
             $table->rememberToken();
             $table->timestamps();
         });
