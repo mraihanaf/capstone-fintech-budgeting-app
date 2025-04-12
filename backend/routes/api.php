@@ -7,11 +7,12 @@ use App\Http\Controllers\Features\LogController;
 use App\Http\Controllers\Features\ScoreController;
 use App\Http\Controllers\Features\TransactionController;
 use App\Http\Controllers\Users\ProfileController;
-use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Middleware\CheckTokenExpiry;
 use App\Http\Controllers\Users\UserController;
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\CheckTokenExpiry;
 use Illuminate\Support\Facades\Route;
+use Tymon\JWTAuth\Http\Middleware\Check;
 
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -46,7 +47,6 @@ Route::middleware(['auth:sanctum', AdminMiddleware::class])->group(function () {
 
     Route::get('admin/logs', [AdminController::class, 'getLogs']);
 });
-
 
 Route::middleware([CheckTokenExpiry::class, 'auth:sanctum'])->group(function () {
     Route::apiResource('transactions', TransactionController::class);
