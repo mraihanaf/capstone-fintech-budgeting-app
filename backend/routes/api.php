@@ -7,6 +7,9 @@ use App\Http\Controllers\Features\LogController;
 use App\Http\Controllers\Features\ScoreController;
 use App\Http\Controllers\Features\TransactionController;
 use App\Http\Controllers\Users\ProfileController;
+use App\Http\Middleware\AdminMiddleware;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Middleware\CheckTokenExpiry;
 use App\Http\Controllers\Users\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,9 +33,22 @@ Route::prefix('profile')->group(function () {
     Route::post('update', [ProfileController::class, 'update'])->middleware('auth:sanctum');
 });
 
-Route::get('user', [UserController::class, 'show'])->middleware('auth:sanctum');
+Route::middleware(['auth:sanctum', AdminMiddleware::class])->group(function () {
+    Route::get('admin/users', [AdminController::class, 'getUsers']);
+    Route::get('admin/users/{email}', [AdminController::class, 'getUserById']);
+    Route::patch('admin/users/{email}/deactivate', [AdminController::class, 'deactivateUser']);
 
-Route::middleware('auth:sanctum')->group(function () {
+    Route::get('admin/transactions', [AdminController::class, 'getAllTransactions']);
+    Route::delete('admin/transactions/{id}', [AdminController::class, 'deleteTransaction']);
+
+    Route::get('admin/categories', [AdminController::class, 'getAllCategories']);
+    Route::delete('admin/categories/{id}', [AdminController::class, 'deleteCategory']);
+
+    Route::get('admin/logs', [AdminController::class, 'getLogs']);
+});
+
+
+Route::middleware([CheckTokenExpiry::class, 'auth:sanctum'])->group(function () {
     Route::apiResource('transactions', TransactionController::class);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('logs', LogController::class);

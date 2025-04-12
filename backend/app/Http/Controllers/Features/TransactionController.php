@@ -12,6 +12,7 @@ use App\Models\Category;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {

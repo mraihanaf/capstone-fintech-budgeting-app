@@ -87,17 +87,19 @@ class AuthController extends Controller
 
         $token = $user->createToken($googleUser->email)->plainTextToken;
 
-        $log = auth('api')->user()->logs()->create([
+        $log = $user->logs()->create([
             'action' => "Login",
             'details' => "User {$user->id} - {$user->email}"
         ]);
 
-        return response()->json([
+        response()->json([
             'message' => 'User login success.',
             'data' => new UserResource($user),
             'log' => new LogResource($log),
             'token' => $token
         ], 200);
+
+        return redirect("http://localhost:5173/google-callback?token=$token");
     }
 
     public function logout(Request $request)
