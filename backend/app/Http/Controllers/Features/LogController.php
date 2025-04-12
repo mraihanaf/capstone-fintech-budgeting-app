@@ -31,7 +31,7 @@ class LogController extends Controller
 
         return response()->json([
             'message' => 'Get all logs success.',
-            'data' => LogResource::collection(Log::all()),
+            'data' => LogResource::collection($log),
             'pagination' => [
                 'total' => $log->total(),
                 'per_page' => $log->perPage(),

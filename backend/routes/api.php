@@ -7,9 +7,9 @@ use App\Http\Controllers\Features\LogController;
 use App\Http\Controllers\Features\ScoreController;
 use App\Http\Controllers\Features\TransactionController;
 use App\Http\Controllers\Users\ProfileController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Users\UserController;
 use App\Http\Middleware\AdminMiddleware;
-use App\Http\Controllers\Admin\AdminController;
 use App\Http\Middleware\CheckTokenExpiry;
 use Illuminate\Support\Facades\Route;
 use Tymon\JWTAuth\Http\Middleware\Check;
@@ -33,8 +33,6 @@ Route::prefix('password')->group(function () {
 Route::prefix('profile')->group(function () {
     Route::post('update', [ProfileController::class, 'update'])->middleware('auth:sanctum');
 });
-
-Route::get('user', [UserController::class, 'show'])->middleware('auth:sanctum');
 
 Route::middleware(['auth:sanctum', AdminMiddleware::class])->group(function () {
     Route::get('admin/users', [AdminController::class, 'getUsers']);

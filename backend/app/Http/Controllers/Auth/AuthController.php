@@ -101,7 +101,7 @@ class AuthController extends Controller
 
         $token = $user->createToken($googleUser->email)->plainTextToken;
 
-        $log = auth('api')->user()->logs()->create([
+        $log = $user->logs()->create([
             'action' => "Login",
             'details' => "User {$user->id} - {$user->email}"
         ]);
