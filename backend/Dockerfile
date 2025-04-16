@@ -1,29 +1,55 @@
-# Use FrankenPHP as the base image
-FROM dunglas/frankenphp:latest
+FROM php:8.2-fpm
 
-# Set working directory
-WORKDIR /app
-
-# Install dependencies using apt-get (Debian-based)
+# Install dependencies
 RUN apt-get update && apt-get install -y \
+    nginx \
+    libzip-dev \
     unzip \
     git \
-    && rm -rf /var/lib/apt/lists/*
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    supervisor \
+    && docker-php-ext-install pdo pdo_mysql zip mbstring exif pcntl \
+    && apt-get clean
 
-# Copy Composer from the official Composer image
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy application files
+# Set working directory
+WORKDIR /var/www
+
+# Copy Laravel project
 COPY . .
 
-# Install PHP dependencies
+# Create SQLite database file
+RUN touch database/database.sqlite
+
+# Set correct permissions for the database file
+RUN chown -R www-data:www-data /var/www/database && chmod -R 775 /var/www/database
+
+# Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions for Laravel directories
-RUN chmod -R 775 storage bootstrap/cache
+# Generate application key
+RUN php artisan key:generate
 
-# Expose port for Laravel Octane
-EXPOSE 80
+# Run migrations to set up the database schema
+RUN php artisan migrate --force
 
-# Command to run Laravel Octane with FrankenPHP and hot reload
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
+# Set permissions for Laravel storage and cache directories
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 775 storage bootstrap/cache
+
+# Copy Nginx config
+COPY docker/nginx.conf /etc/nginx/sites-available/default
+
+# Copy Supervisor config to run Nginx and PHP-FPM
+COPY docker/supervisord.conf /etc/supervisord.conf
+
+# Expose port 80
+EXPOSE 8000
+
+# Command to run Supervisor to manage PHP-FPM and Nginx
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
